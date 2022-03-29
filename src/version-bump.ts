@@ -77,3 +77,19 @@ export async function versionBump(arg: VersionBumpOptions | string = {}): Promis
 
   return operation.results;
 }
+export type VersionOptions = Pick<VersionBumpOptions, "release" | "cwd" | "interface" | "files" | "execute" | "progress">;
+/**
+ * Bumps the version number in one or more files, prompting the user if necessary.
+ */
+export async function versionBumpInfo(arg: VersionOptions | string = {}): Promise<VersionBumpResults> {
+  if (typeof arg === "string") {
+    arg = { release: arg };
+  }
+
+  let operation = await Operation.start(arg);
+
+  // Get the old and new version numbers
+  await getOldVersion(operation);
+  await getNewVersion(operation);
+  return operation.results;
+}
