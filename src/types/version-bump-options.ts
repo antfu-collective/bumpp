@@ -1,4 +1,4 @@
-import { VersionBumpProgress } from "./version-bump-progress";
+import type { VersionBumpProgress } from './version-bump-progress'
 
 /**
  * Options for the `versionBump()` function.
@@ -13,14 +13,14 @@ export interface VersionBumpOptions {
    *
    * Defaults to "prompt".
    */
-  release?: string;
+  release?: string
 
   /**
    * The prerelease type (e.g. "alpha", "beta", "next").
    *
    * Defaults to "beta".
    */
-  preid?: string;
+  preid?: string
 
   /**
    * Indicates whether to create a git commit. Can be set to a custom commit message string
@@ -30,7 +30,7 @@ export interface VersionBumpOptions {
    *
    * Defaults to `false`.
    */
-  commit?: boolean | string;
+  commit?: boolean | string
 
   /**
    * Indicates whether to tag the git commit. Can be set to a custom tag string
@@ -40,14 +40,14 @@ export interface VersionBumpOptions {
    *
    * Defaults to `false`.
    */
-  tag?: boolean | string;
+  tag?: boolean | string
 
   /**
    * Indicates whether to push the git commit and tag.
    *
    * Defaults to `false`.
    */
-  push?: boolean;
+  push?: boolean
 
   /**
    * Indicates whether the git commit should include ALL files (`git commit --all`)
@@ -55,14 +55,21 @@ export interface VersionBumpOptions {
    *
    * Defaults to `false`.
    */
-  all?: boolean;
+  all?: boolean
+
+  /**
+   * Prompt for confirmation
+   *
+   * @default false
+   */
+  confirm?: boolean
 
   /**
    * Indicates whether to bypass git commit hooks (`git commit --no-verify`).
    *
    * Defaults to `false`.
    */
-  noVerify?: boolean;
+  noVerify?: boolean
 
   /**
    * The files to be updated. For certain known files ("package.json", "bower.json", etc.)
@@ -72,14 +79,14 @@ export interface VersionBumpOptions {
    *
    * Defaults to ["package.json", "package-lock.json"]
    */
-  files?: string[];
+  files?: string[]
 
   /**
    * The working directory, which is used as the basis for locating all files.
    *
    * Defaults to `process.cwd()`
    */
-  cwd?: string;
+  cwd?: string
 
   /**
    * Options for the command-line interface. Can be one of the following:
@@ -90,25 +97,24 @@ export interface VersionBumpOptions {
    *
    * Defaults to `true`.
    */
-  interface?: boolean | InterfaceOptions;
+  interface?: boolean | InterfaceOptions
 
   /**
    * Indicates whether to ignore version scripts.
    *
    * Defaults to `false`.
    */
-  ignoreScripts?: boolean;
+  ignoreScripts?: boolean
 
   /**
    * A callback that is provides information about the progress of the `versionBump()` function.
    */
-  progress?(progress: VersionBumpProgress): void;
-
+  progress?(progress: VersionBumpProgress): void
 
   /**
    * Excute additional command after bumping and before commiting
    */
-  execute?: string;
+  execute?: string
 }
 
 /**
@@ -124,7 +130,7 @@ export interface InterfaceOptions {
    *
    * Defaults to `true`.
    */
-  input?: NodeJS.ReadableStream | NodeJS.ReadStream | boolean;
+  input?: NodeJS.ReadableStream | NodeJS.ReadStream | boolean
 
   /**
    * The stream that will be used to write output, such as prompts and progress.
@@ -136,11 +142,11 @@ export interface InterfaceOptions {
    *
    * Defaults to `true`.
    */
-  output?: NodeJS.WritableStream | NodeJS.WriteStream | boolean;
+  output?: NodeJS.WritableStream | NodeJS.WriteStream | boolean
 
   /**
    * Any other properties will be passed directly to `readline.createInterface()`.
    * See the `ReadLineOptions` interface for possible options.
    */
-  [key: string]: unknown;
+  [key: string]: unknown
 }

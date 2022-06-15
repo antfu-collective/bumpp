@@ -1,62 +1,62 @@
-import globby from "globby";
-import { hasMagic } from "globby";
-import { isReleaseType, ReleaseType } from "./release-type";
-import { VersionBumpOptions } from "./types/version-bump-options";
+import fg from 'fast-glob'
+import type { ReleaseType } from './release-type'
+import { isReleaseType } from './release-type'
+import type { VersionBumpOptions } from './types/version-bump-options'
 
 interface Interface {
-  input?: NodeJS.ReadableStream | NodeJS.ReadStream | false;
-  output?: NodeJS.WritableStream | NodeJS.WriteStream | false;
-  [key: string]: unknown;
+  input?: NodeJS.ReadableStream | NodeJS.ReadStream | false
+  output?: NodeJS.WritableStream | NodeJS.WriteStream | false
+  [key: string]: unknown
 }
 
 /**
  * A specific version release.
  */
 export interface VersionRelease {
-  type: "version";
-  version: string;
+  type: 'version'
+  version: string
 }
 
 /**
  * Prompt the user for the release number.
  */
 export interface PromptRelease {
-  type: "prompt";
-  preid: string;
+  type: 'prompt'
+  preid: string
 }
 
 /**
  * A bump release, relative to the current version number.
  */
 export interface BumpRelease {
-  type: ReleaseType;
-  preid: string;
+  type: ReleaseType
+  preid: string
 }
 
 /**
  * One of the possible Release types.
  */
-export type Release = VersionRelease | PromptRelease | BumpRelease;
+export type Release = VersionRelease | PromptRelease | BumpRelease
 
 /**
  * Normalized and sanitized options
  */
 export interface NormalizedOptions {
-  release: Release;
+  release: Release
   commit?: {
-    message: string;
-    noVerify: boolean;
-    all: boolean;
-  };
+    message: string
+    noVerify: boolean
+    all: boolean
+  }
   tag?: {
-    name: string;
-  };
-  push: boolean;
-  files: string[];
-  cwd: string;
-  interface: Interface;
-  ignoreScripts: boolean;
-  execute?: string;
+    name: string
+  }
+  push: boolean
+  files: string[]
+  cwd: string
+  interface: Interface
+  ignoreScripts: boolean
+  execute?: string
 }
 
 /**
@@ -64,115 +64,69 @@ export interface NormalizedOptions {
  */
 export async function normalizeOptions(raw: VersionBumpOptions): Promise<NormalizedOptions> {
   // Set the simple properties first
-  let preid = typeof raw.preid === "string" ? raw.preid : "beta";
-  let push = Boolean(raw.push);
-  let all = Boolean(raw.all);
-  let noVerify = Boolean(raw.noVerify);
-  let cwd = raw.cwd || process.cwd();
-  let ignoreScripts = Boolean(raw.ignoreScripts);
-  let execute = raw.execute;
+  const preid = typeof raw.preid === 'string' ? raw.preid : 'beta'
+  const push = Boolean(raw.push)
+  const all = Boolean(raw.all)
+  const noVerify = Boolean(raw.noVerify)
+  const cwd = raw.cwd || process.cwd()
+  const ignoreScripts = Boolean(raw.ignoreScripts)
+  const execute = raw.execute
 
-  let release: Release;
-  if (!raw.release || raw.release === "prompt") {
-    release = { type: "prompt", preid };
-  }
-  else if (isReleaseType(raw.release)) {
-    release = { type: raw.release, preid };
-  }
-  else {
-    release = { type: "version", version: raw.release };
-  }
+  let release: Release
+  if (!raw.release || raw.release === 'prompt')
+    release = { type: 'prompt', preid }
 
-  let tag;
-  if (typeof raw.tag === "string") {
-    tag = { name: raw.tag };
-  }
-  else if (raw.tag) {
-    tag = { name: "v" };
-  }
+  else if (isReleaseType(raw.release))
+    release = { type: raw.release, preid }
+
+  else
+    release = { type: 'version', version: raw.release }
+
+  let tag
+  if (typeof raw.tag === 'string')
+    tag = { name: raw.tag }
+
+  else if (raw.tag)
+    tag = { name: 'v' }
 
   // NOTE: This must come AFTER `tag` and `push`, because it relies on them
-  let commit;
-  if (typeof raw.commit === "string") {
-    commit = { all, noVerify, message: raw.commit };
-  }
-  else if (raw.commit || tag || push) {
-    commit = { all, noVerify, message: "release v" };
-  }
+  let commit
+  if (typeof raw.commit === 'string')
+    commit = { all, noVerify, message: raw.commit }
 
-  let files;
-  if (Array.isArray(raw.files) && raw.files.length > 0) {
-    files = await strictGlobMatches(raw.files, { cwd });
-  }
-  else {
-    // Try to find these files by default.
-    // If they don't exist, then they will NOT be included in the `files` array.
-    files = await globby(["package.json", "package-lock.json"], { cwd });
-  }
+  else if (raw.commit || tag || push)
+    commit = { all, noVerify, message: 'chore: release v' }
 
-  let ui: Interface;
+  const files = await fg(
+    raw.files?.length
+      ? raw.files
+      : ['package.json', 'package-lock.json'],
+    { cwd, onlyFiles: true },
+  )
+
+  let ui: Interface
   if (raw.interface === false) {
-    ui = { input: false, outut: false };
+    ui = { input: false, output: false }
   }
   else if (raw.interface === true || !raw.interface) {
-    ui = { input: process.stdin, output: process.stdout };
+    ui = { input: process.stdin, output: process.stdout }
   }
   else {
-    let { input, output, ...other } = raw.interface;
+    // eslint-disable-next-line prefer-const
+    let { input, output, ...other } = raw.interface
 
-    if (input === true || (input !== false && !input)) {
-      input = process.stdin;
-    }
+    if (input === true || (input !== false && !input))
+      input = process.stdin
 
-    if (output === true || (output !== false && !output)) {
-      output = process.stdout;
-    }
+    if (output === true || (output !== false && !output))
+      output = process.stdout
 
-    ui = { input, output, ...other };
+    ui = { input, output, ...other }
   }
 
-  if (release.type === "prompt" && !(ui.input && ui.output)) {
-    throw new Error("Cannot prompt for the version number because input or output has been disabled.");
-  }
+  if (release.type === 'prompt' && !(ui.input && ui.output))
+    throw new Error('Cannot prompt for the version number because input or output has been disabled.')
 
-  return { release, commit, tag, push, files, cwd, interface: ui, ignoreScripts, execute };
+  return { release, commit, tag, push, files, cwd, interface: ui, ignoreScripts, execute }
 }
 
-/**
- * Returns all files that match the given glob patterns.
- * An error is thrown if any pattern matches zero files.
- */
-async function strictGlobMatches(files: string[], options: object): Promise<string[]> {
-  // Match all glob patterns simultaneously
-  let matches = await Promise.all(files.map((file) => strictGlobMatch(file, options)));
-
-  // Get all the unique files
-  let matchedFiles = new Set<string>();
-  for (let match of matches) {
-    for (let file of match) {
-      matchedFiles.add(file);
-    }
-  }
-
-  return [...matchedFiles];
-}
-
-/**
- * Returns all files that match the given glob pattern.
- * An error is thrown if the pattern matches zero files.
- */
-async function strictGlobMatch(file: string, options: object): Promise<string[]> {
-  let matches = await globby(file, options);
-
-  if (matches.length === 0) {
-    if (hasMagic(file)) {
-      throw new Error(`Could not find any files matching "${file}".`);
-    }
-    else {
-      throw new Error(`Could not find file: ${file}.`);
-    }
-  }
-
-  // Return files in a predictable order
-  return matches.sort();
-}

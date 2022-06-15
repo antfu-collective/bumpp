@@ -1,4 +1,4 @@
-import { version, name, description } from "../../package.json";
+import { description, name, version } from '../../package.json'
 
 /**
  * Text explaining how to use the CLI
@@ -73,11 +73,11 @@ Examples:
     Sets the version number to 4.27.9934 in package.json, package-lock.json, bower.json,
     and all markdown files in the "docs" directory.  Commits the updated files to git,
     and tags the commit as "Version 4.27.9934".
-`;
+`
 
 /**
  * Text describing the program and how to use it
  */
 export const helpText = `
 ${name} v${version} - ${description}
-${usageText}`;
+${usageText}`

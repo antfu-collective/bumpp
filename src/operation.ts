@@ -1,25 +1,26 @@
-import { NormalizedOptions, normalizeOptions } from "./normalize-options";
-import { ReleaseType } from "./release-type";
-import { VersionBumpOptions } from "./types/version-bump-options";
-import { NpmScript, ProgressEvent, VersionBumpProgress } from "./types/version-bump-progress";
-import { VersionBumpResults } from "./types/version-bump-results";
+import type { NormalizedOptions } from './normalize-options'
+import { normalizeOptions } from './normalize-options'
+import type { ReleaseType } from './release-type'
+import type { VersionBumpOptions } from './types/version-bump-options'
+import type { NpmScript, ProgressEvent, VersionBumpProgress } from './types/version-bump-progress'
+import type { VersionBumpResults } from './types/version-bump-results'
 
-type ProgressCallback = (progress: VersionBumpProgress) => void;
+type ProgressCallback = (progress: VersionBumpProgress) => void
 
 interface OperationState {
-  release: ReleaseType | undefined;
-  oldVersionSource: string;
-  oldVersion: string;
-  newVersion: string;
-  commitMessage: string;
-  tagName: string;
-  updatedFiles: string[];
-  skippedFiles: string[];
+  release: ReleaseType | undefined
+  oldVersionSource: string
+  oldVersion: string
+  newVersion: string
+  commitMessage: string
+  tagName: string
+  updatedFiles: string[]
+  skippedFiles: string[]
 }
 
 interface UpdateOperationState extends Partial<OperationState> {
-  event?: ProgressEvent;
-  script?: NpmScript;
+  event?: ProgressEvent
+  script?: NpmScript
 }
 
 /**
@@ -29,28 +30,28 @@ export class Operation {
   /**
    * The options for this operation.
    */
-  public options: NormalizedOptions;
+  public options: NormalizedOptions
 
   /**
    * The current state of the operation.
    */
   public readonly state: Readonly<OperationState> = {
     release: undefined,
-    oldVersion: "",
-    oldVersionSource: "",
-    newVersion: "",
-    commitMessage: "",
-    tagName: "",
+    oldVersion: '',
+    oldVersionSource: '',
+    newVersion: '',
+    commitMessage: '',
+    tagName: '',
     updatedFiles: [],
     skippedFiles: [],
-  };
+  }
 
   /**
    * The results of the operation.
    */
   public get results(): VersionBumpResults {
-    let options = this.options;
-    let state = this.state;
+    const options = this.options
+    const state = this.state
 
     return {
       release: state.release,
@@ -60,20 +61,20 @@ export class Operation {
       tag: options.tag ? state.tagName : false,
       updatedFiles: state.updatedFiles.slice(),
       skippedFiles: state.skippedFiles.slice(),
-    };
+    }
   }
 
   /**
    * The callback that's used to report the progress of the operation.
    */
-  private readonly _progress?: ProgressCallback;
+  private readonly _progress?: ProgressCallback
 
   /**
    * Private constructor.  Use the `Operation.start()` static method instead.
    */
   private constructor(options: NormalizedOptions, progress?: ProgressCallback) {
-    this.options = options;
-    this._progress = progress;
+    this.options = options
+    this._progress = progress
   }
 
   /**
@@ -81,9 +82,9 @@ export class Operation {
    */
   public static async start(input: VersionBumpOptions): Promise<Operation> {
     // Validate and normalize the options
-    let options = await normalizeOptions(input);
+    const options = await normalizeOptions(input)
 
-    return new Operation(options, input.progress);
+    return new Operation(options, input.progress)
   }
 
   /**
@@ -91,13 +92,13 @@ export class Operation {
    */
   public update({ event, script, ...newState }: UpdateOperationState): this {
     // Update the operation state
-    Object.assign(this.state, newState);
+    Object.assign(this.state, newState)
 
     if (event && this._progress) {
       // Report the progress to the user
-      this._progress({ event, script, ...this.results });
+      this._progress({ event, script, ...this.results })
     }
 
-    return this;
+    return this
   }
 }

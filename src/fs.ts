@@ -1,49 +1,48 @@
-import detectIndent from "detect-indent";
-import detectNewline from "detect-newline";
-import fs from "fs";
-import path from "path";
+import fs from 'fs'
+import path from 'path'
+import detectIndent from 'detect-indent'
+import detectNewline from 'detect-newline'
 
 /**
  * Describes a plain-text file.
  */
 export interface TextFile {
-  path: string;
-  data: string;
+  path: string
+  data: string
 }
 
 /**
  * Describes a JSON file.
  */
 interface JsonFile {
-  path: string;
-  data: unknown;
-  indent: string;
-  newline: string | undefined;
+  path: string
+  data: unknown
+  indent: string
+  newline: string | undefined
 }
 
 /**
  * Reads a JSON file and returns the parsed data.
  */
 export async function readJsonFile(name: string, cwd: string): Promise<JsonFile> {
-  let file = await readTextFile(name, cwd);
-  let data = JSON.parse(file.data) as unknown;
-  let indent = detectIndent(file.data).indent;
-  let newline = detectNewline(file.data);
+  const file = await readTextFile(name, cwd)
+  const data = JSON.parse(file.data) as unknown
+  const indent = detectIndent(file.data).indent
+  const newline = detectNewline(file.data)
 
-  return { ...file, data, indent, newline };
+  return { ...file, data, indent, newline }
 }
 
 /**
  * Writes the given data to the specified JSON file.
  */
 export async function writeJsonFile(file: JsonFile): Promise<void> {
-  let json = JSON.stringify(file.data, undefined, file.indent);
+  let json = JSON.stringify(file.data, undefined, file.indent)
 
-  if (file.newline) {
-    json += file.newline;
-  }
+  if (file.newline)
+    json += file.newline
 
-  return writeTextFile({ ...file, data: json });
+  return writeTextFile({ ...file, data: json })
 }
 
 /**
@@ -51,20 +50,20 @@ export async function writeJsonFile(file: JsonFile): Promise<void> {
  */
 export function readTextFile(name: string, cwd: string): Promise<TextFile> {
   return new Promise((resolve, reject) => {
-    let filePath = path.join(cwd, name);
+    const filePath = path.join(cwd, name)
 
-    fs.readFile(filePath, "utf8", (err, text) => {
+    fs.readFile(filePath, 'utf8', (err, text) => {
       if (err) {
-        reject(err);
+        reject(err)
       }
       else {
         resolve({
           path: filePath,
           data: text,
-        });
+        })
       }
-    });
-  });
+    })
+  })
 }
 
 /**
@@ -73,12 +72,11 @@ export function readTextFile(name: string, cwd: string): Promise<TextFile> {
 export function writeTextFile(file: TextFile): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.writeFile(file.path, file.data, (err) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve();
-      }
-    });
-  });
+      if (err)
+        reject(err)
+
+      else
+        resolve()
+    })
+  })
 }

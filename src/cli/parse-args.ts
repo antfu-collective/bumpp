@@ -1,18 +1,19 @@
-import commandLineArgs from "command-line-args";
-import { valid as isValidVersion } from "semver";
-import { isReleaseType } from "../release-type";
-import { VersionBumpOptions } from "../types/version-bump-options";
-import { ExitCode } from "./exit-code";
-import { usageText } from "./help";
+import { valid as isValidVersion } from 'semver'
+import cac from 'cac'
+import { isReleaseType } from '../release-type'
+import type { VersionBumpOptions } from '../types/version-bump-options'
+import { version } from '../../package.json'
+import { ExitCode } from './exit-code'
+import { usageText } from './help'
 
 /**
  * The parsed command-line arguments
  */
 export interface ParsedArgs {
-  help?: boolean;
-  version?: boolean;
-  quiet?: boolean;
-  options: VersionBumpOptions;
+  help?: boolean
+  version?: boolean
+  quiet?: boolean
+  options: VersionBumpOptions
 }
 
 /**
@@ -20,77 +21,64 @@ export interface ParsedArgs {
  */
 export function parseArgs(argv: string[]): ParsedArgs {
   try {
-    let args = commandLineArgs(
-      [
-        { name: "preid", type: String },
-        { name: "commit", alias: "c", type: String },
-        { name: "tag", alias: "t", type: String },
-        { name: "push", alias: "p", type: Boolean },
-        { name: "all", alias: "a", type: Boolean },
-        { name: "no-verify", type: Boolean },
-        { name: "quiet", alias: "q", type: Boolean },
-        { name: "version", alias: "v", type: Boolean },
-        { name: "help", alias: "h", type: Boolean },
-        { name: "ignore-scripts", type: Boolean },
-        { name: "execute", alias: "x", type: String },
-        { name: "files", type: String, multiple: true, defaultOption: true },
-      ],
-      { argv }
-    );
+    const cli = cac('bumpp')
 
-    let parsedArgs: ParsedArgs = {
+    cli
+      .version(version)
+      .usage('[...files]')
+      .option('--preid <preid>', 'ID for prerelease')
+      .option('--all', 'Include all files')
+      .option('-c, --commit [msg]', 'Commit message', { default: true })
+      .option('-t, --tag [tag]', 'Tag name', { default: true })
+      .option('-p, --push', 'Push to remote', { default: true })
+      .option('-y, --yes', 'Skip confirmation')
+      .option('--no-verify', 'Skip git verification')
+      .option('--ignore-scripts', 'Ignore scripts', { default: false })
+      .option('-q, --quiet', 'Quiet mode')
+      .option('-v, --version <version>', 'Tagert version')
+      .option('-x, --execute <command>', 'Commands to execute after version bumps')
+      .help()
+
+    const args = cli.parse(argv).options
+
+    const parsedArgs: ParsedArgs = {
       help: args.help as boolean,
       version: args.version as boolean,
       quiet: args.quiet as boolean,
       options: {
-        preid: args.preid as string,
-        commit: args.commit as string | boolean,
-        tag: args.tag as string | boolean,
-        push: args.push as boolean,
-        all: args.all as boolean,
-        noVerify: args["no-verify"] as boolean,
-        files: args.files as string[],
-        ignoreScripts: args["ignore-scripts"] as boolean,
-        execute: args.execute as string | undefined,
-      }
-    };
-
-    // If --preid is used without an argument, then throw an error, since it's probably a mistake.
-    // If they want to use the default value ("beta"), then they should not pass the argument at all
-    if (args.preid === null) {
-      throw new Error("The --preid option requires a value, such as \"alpha\", \"beta\", etc.");
-    }
-
-    // If --commit is used without an argument, then treat it as a boolean flag
-    if (args.commit === null) {
-      parsedArgs.options.commit = true;
-    }
-
-    // If --tag is used without an argument, then treat it as a boolean flag
-    if (args.tag === null) {
-      parsedArgs.options.tag = true;
+        preid: args.preid,
+        commit: args.commit,
+        tag: args.tag,
+        push: args.push,
+        all: args.all,
+        confirm: !args.yes,
+        noVerify: !args.verify,
+        files: args['--'],
+        ignoreScripts: args.ignoreScripts,
+        execute: args.execute,
+      },
     }
 
     // If a version number or release type was specified, then it will mistakenly be added to the "files" array
     if (parsedArgs.options.files && parsedArgs.options.files.length > 0) {
-      let firstArg = parsedArgs.options.files[0];
+      const firstArg = parsedArgs.options.files[0]
 
-      if (firstArg === "prompt" || isReleaseType(firstArg) || isValidVersion(firstArg)) {
-        parsedArgs.options.release = firstArg;
-        parsedArgs.options.files.shift();
+      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
+        parsedArgs.options.release = firstArg
+        parsedArgs.options.files.shift()
       }
     }
 
-    return parsedArgs;
+    return parsedArgs
   }
   catch (error) {
     // There was an error parsing the command-line args
-    return errorHandler(error as Error);
+    return errorHandler(error as Error)
   }
 }
 
 function errorHandler(error: Error): never {
-  console.error(error.message);
-  console.error(usageText);
-  return process.exit(ExitCode.InvalidArgument);
+  console.error(error.message)
+  console.error(usageText)
+  return process.exit(ExitCode.InvalidArgument)
 }
