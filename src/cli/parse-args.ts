@@ -23,7 +23,6 @@ export function parseArgs(): ParsedArgs {
     const cli = cac('bumpp')
 
     cli
-      .version(version)
       .usage('[...files]')
       .option('--preid <preid>', 'ID for prerelease')
       .option('--all', 'Include all files')
