@@ -18,7 +18,7 @@ export async function main(): Promise<void> {
     process.on('unhandledRejection', errorHandler)
 
     // Parse the command-line arguments
-    const { help, version, quiet, options } = parseArgs()
+    const { help, version, quiet, options } = await parseArgs()
 
     if (help) {
       process.exit(ExitCode.Success)
@@ -30,7 +30,7 @@ export async function main(): Promise<void> {
     }
     else {
       if (!quiet)
-        options.progress = progress
+        options.progress = options.progress ? options.progress : progress
 
       await versionBump(options)
     }

@@ -4,6 +4,7 @@ import c from 'picocolors'
 import { isReleaseType } from '../release-type'
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import { version } from '../../package.json'
+import { bumpConfigDefaults, loadBumpConfig } from '../config'
 import { ExitCode } from './exit-code'
 
 /**
@@ -19,7 +20,7 @@ export interface ParsedArgs {
 /**
  * Parses the command-line arguments
  */
-export function parseArgs(): ParsedArgs {
+export async function parseArgs(): Promise<ParsedArgs> {
   try {
     const cli = cac('bumpp')
 
@@ -27,14 +28,14 @@ export function parseArgs(): ParsedArgs {
       .version(version)
       .usage('[...files]')
       .option('--preid <preid>', 'ID for prerelease')
-      .option('--all', 'Include all files')
-      .option('-c, --commit [msg]', 'Commit message', { default: true })
-      .option('-t, --tag [tag]', 'Tag name', { default: true })
-      .option('-p, --push', 'Push to remote', { default: true })
-      .option('-y, --yes', 'Skip confirmation')
-      .option('-r, --recursive', 'Bump package.json files recursively', { default: false })
+      .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
+      .option('-c, --commit [msg]', `Commit message (default: ${bumpConfigDefaults.commit})`)
+      .option('-t, --tag [tag]', `Tag name (default: ${bumpConfigDefaults.tag})`)
+      .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
+      .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
+      .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
       .option('--no-verify', 'Skip git verification')
-      .option('--ignore-scripts', 'Ignore scripts', { default: false })
+      .option('--ignore-scripts', `Ignore scripts (default: ${bumpConfigDefaults.ignoreScripts})`)
       .option('-q, --quiet', 'Quiet mode')
       .option('-v, --version <version>', 'Tagert version')
       .option('-x, --execute <command>', 'Commands to execute after version bumps')
@@ -47,7 +48,7 @@ export function parseArgs(): ParsedArgs {
       help: args.help as boolean,
       version: args.version as boolean,
       quiet: args.quiet as boolean,
-      options: {
+      options: await loadBumpConfig({
         preid: args.preid,
         commit: args.commit,
         tag: args.tag,
@@ -55,11 +56,11 @@ export function parseArgs(): ParsedArgs {
         all: args.all,
         confirm: !args.yes,
         noVerify: !args.verify,
-        files: [...args['--'] || [], ...result.args],
+        files: [...(args['--'] || []), ...result.args],
         ignoreScripts: args.ignoreScripts,
         execute: args.execute,
         recursive: !!args.recursive,
-      },
+      }),
     }
 
     // If a version number or release type was specified, then it will mistakenly be added to the "files" array

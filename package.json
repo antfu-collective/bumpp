@@ -52,12 +52,13 @@
     "watch": "npm run build -- --watch src",
     "start": "esno src/cli/run.ts",
     "upgrade": "npm-check -u && npm audit fix",
-    "bumpp": "esno src/cli/run.ts --tag --push --all",
+    "bumpp": "esno src/cli/run.ts",
     "prepublishOnly": "npm run clean && npm run build",
     "release": "npm run bumpp && npm publish"
   },
   "dependencies": {
     "@jsdevtools/ez-spawn": "^3.0.4",
+    "c12": "^1.1.2",
     "cac": "^6.7.14",
     "fast-glob": "^3.2.12",
     "prompts": "^2.4.2",
