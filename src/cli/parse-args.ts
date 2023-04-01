@@ -37,7 +37,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
       .option('--no-verify', 'Skip git verification')
       .option('--ignore-scripts', `Ignore scripts (default: ${bumpConfigDefaults.ignoreScripts})`)
       .option('-q, --quiet', 'Quiet mode')
-      .option('-v, --version <version>', 'Tagert version')
+      .option('-v, --version <version>', 'Target version')
       .option('-x, --execute <command>', 'Commands to execute after version bumps')
       .help()
 
