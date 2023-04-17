@@ -60,6 +60,7 @@
     "@jsdevtools/ez-spawn": "^3.0.4",
     "c12": "^1.2.0",
     "cac": "^6.7.14",
+    "escalade": "^3.1.1",
     "fast-glob": "^3.2.12",
     "prompts": "^2.4.2",
     "semver": "^7.3.8"
