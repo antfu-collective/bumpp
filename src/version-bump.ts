@@ -71,7 +71,7 @@ export async function versionBump(arg: VersionBumpOptions | string = {}): Promis
 
   if (operation.options.execute) {
     console.log(symbols.info, 'Executing script', operation.options.execute)
-    await ezSpawn.async(operation.options.execute, { stdio: 'inherit' })
+    await ezSpawn.async(formatVersionString(operation.options.execute, operation.state.newVersion), { stdio: 'inherit' })
     console.log(symbols.success, 'Script finished')
   }
 
