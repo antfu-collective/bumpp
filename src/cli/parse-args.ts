@@ -30,7 +30,9 @@ export async function parseArgs(): Promise<ParsedArgs> {
       .option('--preid <preid>', 'ID for prerelease')
       .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
       .option('-c, --commit [msg]', `Commit message (default: ${bumpConfigDefaults.commit})`)
+      .option('--no-commit', 'Skip commit')
       .option('-t, --tag [tag]', `Tag name (default: ${bumpConfigDefaults.tag})`)
+      .option('--no-tag', 'Skip tag')
       .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
       .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
       .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
@@ -50,8 +52,8 @@ export async function parseArgs(): Promise<ParsedArgs> {
       quiet: args.quiet as boolean,
       options: await loadBumpConfig({
         preid: args.preid,
-        commit: args.commit,
-        tag: args.tag,
+        commit: !args.noCommit && args.commit,
+        tag: !args.noTag && args.tag,
         push: args.push,
         all: args.all,
         confirm: !args.yes,
