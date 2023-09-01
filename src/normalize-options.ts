@@ -1,7 +1,7 @@
 import process from 'node:process'
 import fg from 'fast-glob'
 import type { ReleaseType } from './release-type'
-import { isReleaseType } from './release-type'
+import { isNextReleaseType, isReleaseType } from './release-type'
 import type { VersionBumpOptions } from './types/version-bump-options'
 
 interface Interface {
@@ -77,7 +77,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   if (!raw.release || raw.release === 'prompt')
     release = { type: 'prompt', preid }
 
-  else if (isReleaseType(raw.release))
+  else if (isReleaseType(raw.release) || isNextReleaseType(raw.release))
     release = { type: raw.release, preid }
 
   else

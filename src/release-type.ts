@@ -34,6 +34,6 @@ export function isReleaseType(value: any): value is ReleaseType {
 /**
  * Determines whether the next value is a valid ReleaseType string.
  */
-export function isNextReleaseType(value: string): boolean {
+export function isNextReleaseType(value: string): value is ReleaseType {
   return nextType === value
 }
