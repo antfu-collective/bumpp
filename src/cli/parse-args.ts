@@ -2,7 +2,7 @@ import process from 'node:process'
 import { valid as isValidVersion } from 'semver'
 import cac from 'cac'
 import c from 'picocolors'
-import { isReleaseType } from '../release-type'
+import { isNextReleaseType, isReleaseType } from '../release-type'
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import { version } from '../../package.json'
 import { bumpConfigDefaults, loadBumpConfig } from '../config'
@@ -70,7 +70,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
     if (parsedArgs.options.files && parsedArgs.options.files.length > 0) {
       const firstArg = parsedArgs.options.files[0]
 
-      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
+      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg) || isNextReleaseType(firstArg)) {
         parsedArgs.options.release = firstArg
         parsedArgs.options.files.shift()
       }
