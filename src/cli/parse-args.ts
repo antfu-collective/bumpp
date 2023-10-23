@@ -23,29 +23,7 @@ export interface ParsedArgs {
  */
 export async function parseArgs(): Promise<ParsedArgs> {
   try {
-    const cli = cac('bumpp')
-
-    cli
-      .version(version)
-      .usage('[...files]')
-      .option('--preid <preid>', 'ID for prerelease')
-      .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
-      .option('-c, --commit [msg]', `Commit message (default: ${bumpConfigDefaults.commit})`)
-      .option('--no-commit', 'Skip commit')
-      .option('-t, --tag [tag]', `Tag name (default: ${bumpConfigDefaults.tag})`)
-      .option('--no-tag', 'Skip tag')
-      .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
-      .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
-      .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
-      .option('--no-verify', 'Skip git verification')
-      .option('--ignore-scripts', `Ignore scripts (default: ${bumpConfigDefaults.ignoreScripts})`)
-      .option('-q, --quiet', 'Quiet mode')
-      .option('-v, --version <version>', 'Tagert version')
-      .option('-x, --execute <command>', 'Commands to execute after version bumps')
-      .help()
-
-    const result = cli.parse()
-    const args = result.options
+    const { args, resultArgs } = loadCliArgs()
 
     const parsedArgs: ParsedArgs = {
       help: args.help as boolean,
@@ -53,13 +31,13 @@ export async function parseArgs(): Promise<ParsedArgs> {
       quiet: args.quiet as boolean,
       options: await loadBumpConfig({
         preid: args.preid,
-        commit: !args.noCommit && args.commit,
-        tag: !args.noTag && args.tag,
+        commit: args.commit,
+        tag: args.tag,
         push: args.push,
         all: args.all,
         confirm: !args.yes,
         noVerify: !args.verify,
-        files: [...(args['--'] || []), ...result.args],
+        files: [...(args['--'] || []), ...resultArgs],
         ignoreScripts: args.ignoreScripts,
         execute: args.execute,
         recursive: !!args.recursive,
@@ -89,6 +67,47 @@ export async function parseArgs(): Promise<ParsedArgs> {
   catch (error) {
     // There was an error parsing the command-line args
     return errorHandler(error as Error)
+  }
+}
+
+export function loadCliArgs(argv = process.argv) {
+  const cli = cac('bumpp')
+
+  cli
+    .version(version)
+    .usage('[...files]')
+    .option('--preid <preid>', 'ID for prerelease')
+    .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
+    .option('-c, --commit [msg]', 'Commit message', { default: true })
+    .option('--no-commit', 'Skip commit', { default: false })
+    .option('-t, --tag [tag]', 'Tag name', { default: true })
+    .option('--no-tag', 'Skip tag', { default: false })
+    .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
+    .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
+    .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
+    .option('--no-verify', 'Skip git verification')
+    .option('--ignore-scripts', `Ignore scripts (default: ${bumpConfigDefaults.ignoreScripts})`)
+    .option('-q, --quiet', 'Quiet mode')
+    .option('-v, --version <version>', 'Tagert version')
+    .option('-x, --execute <command>', 'Commands to execute after version bumps')
+    .help()
+
+  const result = cli.parse(argv)
+  const rawArgs = cli.rawArgs
+  const args = result.options
+
+  const hasCommitFlag = rawArgs.some(arg => ['-c', '--commit', '--no-commit'].includes(arg))
+  const hasTagFlag = rawArgs.some(arg => ['-t', '--tag', '--no-tag'].includes(arg))
+
+  const { tag, commit, ...rest } = args
+
+  return {
+    args: {
+      ...rest,
+      commit: hasCommitFlag ? commit : undefined,
+      tag: hasTagFlag ? tag : undefined,
+    } as { [k: string]: any },
+    resultArgs: result.args,
   }
 }
 
