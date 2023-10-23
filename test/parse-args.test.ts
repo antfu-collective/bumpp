@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { loadCliArgs } from './parse-args'
+import { loadCliArgs } from '../src/cli/parse-args'
 
 const defaultArgs = ['node', 'bumpp']
 
