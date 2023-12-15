@@ -11,7 +11,7 @@ export async function gitCommit(operation: Operation): Promise<Operation> {
 
   const { all, noVerify, message } = operation.options.commit
   const { updatedFiles, newVersion } = operation.state
-  let args = []
+  let args = ['--allow-empty']
 
   if (all) {
     // Commit ALL files, not just the ones that were bumped
