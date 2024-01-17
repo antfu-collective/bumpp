@@ -61,11 +61,13 @@
     "c12": "^1.5.1",
     "cac": "^6.7.14",
     "fast-glob": "^3.3.2",
+    "js-yaml": "^4.1.0",
     "prompts": "^2.4.2",
     "semver": "^7.5.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.4.3",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.4",
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.5.6",

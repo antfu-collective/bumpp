@@ -7,6 +7,8 @@ import type { VersionBumpOptions } from '../types/version-bump-options'
 import { version } from '../../package.json'
 import { bumpConfigDefaults, loadBumpConfig } from '../config'
 import { ExitCode } from './exit-code'
+import node_fs from 'node:fs'
+import yaml from 'js-yaml'
 
 /**
  * The parsed command-line arguments
@@ -79,9 +81,23 @@ export async function parseArgs(): Promise<ParsedArgs> {
     if (parsedArgs.options.recursive) {
       if (parsedArgs.options.files?.length)
         console.log(c.yellow('The --recursive option is ignored when files are specified'))
-
-      else
+      else {
         parsedArgs.options.files = ['package.json', 'package-lock.json', 'packages/**/package.json']
+
+        // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
+        if (node_fs.existsSync('pnpm-workspace.yaml')){
+          // read pnpm-workspace.yaml
+          const pnpmWorkspace = node_fs.readFileSync('pnpm-workspace.yaml', 'utf8')
+          // parse yaml
+          const workspaces = yaml.load(pnpmWorkspace) as {packages: string[]}
+          // append package.json to each workspace string
+          const workspacesWithPackageJson = workspaces.packages.map((workspace) =>  workspace + '/package.json')
+          // start with ! or already in files should be excluded
+          const withoutExcludedWorkspaces = workspacesWithPackageJson.filter((workspace) => !workspace.startsWith('!') && !parsedArgs.options.files?.includes(workspace))
+          // add to files
+          parsedArgs.options.files = parsedArgs.options.files.concat(withoutExcludedWorkspaces)
+        }
+      }
     }
 
     return parsedArgs
