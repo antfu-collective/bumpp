@@ -1,6 +1,6 @@
 import * as path from 'node:path'
 import { readJsonFile, readTextFile, writeJsonFile, writeTextFile } from './fs'
-import { isManifest } from './manifest'
+import { isManifest, isPackageLockManifest } from './manifest'
 import type { Operation } from './operation'
 import { ProgressEvent } from './types/version-bump-progress'
 
@@ -67,6 +67,9 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
 
   if (isManifest(file.data) && file.data.version !== newVersion) {
     file.data.version = newVersion
+    if (isPackageLockManifest(file.data)) {
+      file.data.packages[''].version = newVersion
+    }
     await writeJsonFile(file)
     modified = true
   }
