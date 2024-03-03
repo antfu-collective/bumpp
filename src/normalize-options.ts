@@ -102,7 +102,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   const files = await fg(
     raw.files?.length
       ? raw.files
-      : ['package.json', 'package-lock.json'],
+      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc'],
     {
       cwd,
       onlyFiles: true,

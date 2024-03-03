@@ -43,6 +43,7 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
     case 'package-lock.json':
     case 'bower.json':
     case 'component.json':
+    case 'jsr.json':
       return updateManifestFile(relPath, operation)
 
     default:

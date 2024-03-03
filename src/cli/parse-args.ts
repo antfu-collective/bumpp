@@ -84,7 +84,13 @@ export async function parseArgs(): Promise<ParsedArgs> {
         console.log(c.yellow('The --recursive option is ignored when files are specified'))
       }
       else {
-        parsedArgs.options.files = ['package.json', 'package-lock.json', 'packages/**/package.json']
+        parsedArgs.options.files = [
+          'package.json',
+          'package-lock.json',
+          'packages/**/package.json',
+          'jsr.json',
+          'jsr.jsonc',
+        ]
 
         // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
         if (fsSync.existsSync('pnpm-workspace.yaml')) {
