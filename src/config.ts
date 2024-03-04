@@ -1,5 +1,4 @@
 import process from 'node:process'
-import { readdirSync } from 'node:fs'
 import { loadConfig } from 'c12'
 import type { VersionBumpOptions } from './types/version-bump-options'
 
@@ -17,13 +16,19 @@ export const bumpConfigDefaults: VersionBumpOptions = {
 
 export async function loadBumpConfig(overrides?: Partial<VersionBumpOptions>,
   cwd = process.cwd()) {
-  const childrenNames = readdirSync(cwd)
-  const name = childrenNames.some(name => name.includes('bumpp')) ? 'bumpp' : 'bump'
-  const { config } = await loadConfig<VersionBumpOptions>({
-    name,
+  const { config: bumppConfig } = await loadConfig<VersionBumpOptions>({
+    name: 'bumpp',
     defaults: bumpConfigDefaults,
     overrides: {
       ...(overrides as VersionBumpOptions),
+    },
+    cwd,
+  })
+  const { config } = await loadConfig<VersionBumpOptions>({
+    name: 'bump',
+    defaults: bumpConfigDefaults,
+    overrides: {
+      ...(bumppConfig!),
     },
     cwd,
   })
