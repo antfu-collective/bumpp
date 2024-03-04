@@ -1,3 +1,4 @@
+import type _semver from 'semver'
 import type { VersionBumpProgress } from './version-bump-progress'
 
 /**
@@ -77,7 +78,7 @@ export interface VersionBumpOptions {
    * (ReadMe files, config files, source code, etc.) it will simply do a global replacement
    * of the old version number with the new version number.
    *
-   * Defaults to ["package.json", "package-lock.json"]
+   * Defaults to ["package.json", "package-lock.json", "jsr.json", "jsr.jsonc"]
    */
   files?: string[]
 
@@ -122,6 +123,11 @@ export interface VersionBumpOptions {
    * @default false
    */
   recursive?: boolean
+
+  /**
+   * Custom function to provide the version number
+   */
+  customVersion?: (currentVersion: string, semver: typeof _semver) => Promise<string | void> | string | void
 }
 
 /**
