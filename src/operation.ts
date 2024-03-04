@@ -9,8 +9,8 @@ type ProgressCallback = (progress: VersionBumpProgress) => void
 
 interface OperationState {
   release: ReleaseType | undefined
-  oldVersionSource: string
-  oldVersion: string
+  currentVersionSource: string
+  currentVersion: string
   newVersion: string
   commitMessage: string
   tagName: string
@@ -37,8 +37,8 @@ export class Operation {
    */
   public readonly state: Readonly<OperationState> = {
     release: undefined,
-    oldVersion: '',
-    oldVersionSource: '',
+    currentVersion: '',
+    currentVersionSource: '',
     newVersion: '',
     commitMessage: '',
     tagName: '',
@@ -55,7 +55,7 @@ export class Operation {
 
     return {
       release: state.release,
-      oldVersion: state.oldVersion,
+      currentVersion: state.currentVersion,
       newVersion: state.newVersion,
       commit: options.commit ? state.commitMessage : false,
       tag: options.tag ? state.tagName : false,
@@ -75,6 +75,12 @@ export class Operation {
   private constructor(options: NormalizedOptions, progress?: ProgressCallback) {
     this.options = options
     this._progress = progress
+    if (options.currentVersion) {
+      this.update({
+        currentVersion: options.currentVersion,
+        currentVersionSource: 'user',
+      })
+    }
   }
 
   /**

@@ -9,6 +9,17 @@ export interface Manifest {
 }
 
 /**
+ * The npm package lock manifest (package-lock.json)
+ */
+export interface PackageLockManifest extends Manifest {
+  packages: {
+    '': {
+      version: string
+    }
+  }
+}
+
+/**
  * Determines whether the specified value is a package manifest.
  */
 export function isManifest(obj: any): obj is Manifest {
@@ -17,6 +28,15 @@ export function isManifest(obj: any): obj is Manifest {
     && isOptionalString(obj.name)
     && isOptionalString(obj.version)
     && isOptionalString(obj.description)
+}
+
+/**
+ * Determines whether the specified manifest is package-lock.json
+ */
+export function isPackageLockManifest(
+  manifest: Manifest,
+): manifest is PackageLockManifest {
+  return (typeof (manifest as PackageLockManifest).packages?.['']?.version === 'string')
 }
 
 /**

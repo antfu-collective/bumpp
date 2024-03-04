@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { loadConfig } from 'c12'
 import escalade from 'escalade/sync'
 import type { VersionBumpOptions } from './types/version-bump-options'
@@ -14,8 +15,10 @@ export const bumpConfigDefaults: VersionBumpOptions = {
   files: [],
 }
 
-export async function loadBumpConfig(overrides?: Partial<VersionBumpOptions>,
-  cwd = process.cwd()) {
+export async function loadBumpConfig(
+  overrides?: Partial<VersionBumpOptions>,
+  cwd = process.cwd()
+) {
   const name = 'bump'
   const configFile = findConfigFile(name, cwd)
   if (configFile) {

@@ -3,23 +3,24 @@
     "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "declaration": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "newLine": "LF",
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
     "strictBindCallApply": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "declaration": true,
+    "newLine": "LF",
+    "sourceMap": true,
     "stripInternal": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "test/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -1,6 +1,6 @@
-import { ReleaseType } from 'semver'
+import type { ReleaseType as SemverReleaseType } from 'semver'
 
-export { ReleaseType }
+export type ReleaseType = SemverReleaseType | 'next'
 
 /**
  * The different types of pre-releases.
@@ -10,7 +10,7 @@ export const prereleaseTypes: ReleaseType[] = ['premajor', 'preminor', 'prepatch
 /**
  * All possible release types.
  */
-export const releaseTypes: ReleaseType[] = prereleaseTypes.concat(['major', 'minor', 'patch'])
+export const releaseTypes: ReleaseType[] = prereleaseTypes.concat(['major', 'minor', 'patch', 'next'])
 
 /**
  * Determines whether the specified value is a pre-release.

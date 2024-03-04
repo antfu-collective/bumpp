@@ -1,3 +1,4 @@
+import process from 'node:process'
 import fg from 'fast-glob'
 import type { ReleaseType } from './release-type'
 import { isReleaseType } from './release-type'
@@ -57,6 +58,8 @@ export interface NormalizedOptions {
   interface: Interface
   ignoreScripts: boolean
   execute?: string
+  customVersion?: VersionBumpOptions['customVersion']
+  currentVersion?: string
 }
 
 /**
@@ -76,7 +79,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   if (!raw.release || raw.release === 'prompt')
     release = { type: 'prompt', preid }
 
-  else if (isReleaseType(raw.release))
+  else if (isReleaseType(raw.release) || raw.release === 'next')
     release = { type: raw.release, preid }
 
   else
@@ -100,7 +103,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   const files = await fg(
     raw.files?.length
       ? raw.files
-      : ['package.json', 'package-lock.json'],
+      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc'],
     {
       cwd,
       onlyFiles: true,
@@ -132,5 +135,17 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   if (release.type === 'prompt' && !(ui.input && ui.output))
     throw new Error('Cannot prompt for the version number because input or output has been disabled.')
 
-  return { release, commit, tag, push, files, cwd, interface: ui, ignoreScripts, execute }
+  return {
+    release,
+    commit,
+    tag,
+    push,
+    files,
+    cwd,
+    interface: ui,
+    ignoreScripts,
+    execute,
+    customVersion: raw.customVersion,
+    currentVersion: raw.currentVersion,
+  }
 }

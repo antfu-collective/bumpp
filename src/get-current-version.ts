@@ -7,7 +7,10 @@ import type { Operation } from './operation'
  * Finds the current version number from files such as package.json.
  * An error is thrown if no version number can be found.
  */
-export async function getOldVersion(operation: Operation): Promise<Operation> {
+export async function getCurrentVersion(operation: Operation): Promise<Operation> {
+  if (operation.state.currentVersion)
+    return operation
+
   const { cwd, files } = operation.options
 
   // Check all JSON files in the files list
@@ -24,8 +27,8 @@ export async function getOldVersion(operation: Operation): Promise<Operation> {
     if (version) {
       // We found the current version number!
       return operation.update({
-        oldVersionSource: file,
-        oldVersion: version,
+        currentVersionSource: file,
+        currentVersion: version,
       })
     }
   }

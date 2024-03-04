@@ -12,7 +12,7 @@ export interface VersionBumpResults {
   /**
    * The previous version number in package.json.
    */
-  oldVersion: string
+  currentVersion: string
 
   /**
    * The new version number.

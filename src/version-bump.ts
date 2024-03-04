@@ -1,9 +1,10 @@
+import process from 'node:process'
 import * as ezSpawn from '@jsdevtools/ez-spawn'
 import c from 'picocolors'
 import symbols from 'log-symbols'
 import prompts from 'prompts'
 import { getNewVersion } from './get-new-version'
-import { getOldVersion } from './get-old-version'
+import { getCurrentVersion } from './get-current-version'
 import { formatVersionString, gitCommit, gitPush, gitTag } from './git'
 import { Operation } from './operation'
 import { runNpmScript } from './run-npm-script'
@@ -41,14 +42,14 @@ export async function versionBump(options: VersionBumpOptions): Promise<VersionB
  * Bumps the version number in one or more files, prompting the user if necessary.
  * Optionally also commits, tags, and pushes to git.
  */
-export async function versionBump(arg: VersionBumpOptions | string = {}): Promise<VersionBumpResults | undefined> {
+export async function versionBump(arg: (VersionBumpOptions) | string = {}): Promise<VersionBumpResults | undefined> {
   if (typeof arg === 'string')
     arg = { release: arg }
 
   const operation = await Operation.start(arg)
 
   // Get the old and new version numbers
-  await getOldVersion(operation)
+  await getCurrentVersion(operation)
   await getNewVersion(operation)
 
   if (arg.confirm) {
@@ -103,7 +104,7 @@ function printSummary(operation: Operation) {
   if (operation.options.push)
     console.log(`    push ${c.cyan(c.bold('yes'))}`)
   console.log()
-  console.log(`    from ${c.bold(operation.state.oldVersion)}`)
+  console.log(`    from ${c.bold(operation.state.currentVersion)}`)
   console.log(`      to ${c.green(c.bold(operation.state.newVersion))}`)
   console.log()
 }
@@ -118,7 +119,7 @@ export async function versionBumpInfo(arg: VersionBumpOptions | string = {}): Pr
   const operation = await Operation.start(arg)
 
   // Get the old and new version numbers
-  await getOldVersion(operation)
+  await getCurrentVersion(operation)
   await getNewVersion(operation)
   return operation
 }
