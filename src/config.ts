@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { dirname } from 'node:path'
 import { loadConfig } from 'c12'
 import escalade from 'escalade/sync'
 import type { VersionBumpOptions } from './types/version-bump-options'
@@ -21,26 +22,22 @@ export async function loadBumpConfig(
 ) {
   const name = 'bump'
   const configFile = findConfigFile(name, cwd)
-  if (configFile) {
-    const { config } = await loadConfig<VersionBumpOptions>({
-      configFile,
-      defaults: bumpConfigDefaults,
-      overrides: {
-        ...(overrides as VersionBumpOptions),
-      },
-      cwd,
-    })
-
-    return config!
-  }
-  return structuredClone(bumpConfigDefaults)
+  const { config } = await loadConfig<VersionBumpOptions>({
+    name,
+    defaults: bumpConfigDefaults,
+    overrides: {
+      ...(overrides as VersionBumpOptions),
+    },
+    cwd: configFile ? dirname(configFile) : cwd,
+  })
+  return config!
 }
 
 function findConfigFile(name: string, cwd: string) {
   let foundRepositoryRoot = false
   try {
     const candidates = ['js', 'mjs', 'ts', 'mts', 'json'].map(ext => `${name}.config.${ext}`)
-    return escalade(cwd, (dir, files) => {
+    return escalade(cwd, (_dir, files) => {
       const match = files.find((file) => {
         if (candidates.includes(file))
           return true
