@@ -68,9 +68,9 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
 
   if (isManifest(file.data) && file.data.version !== newVersion) {
     file.data.version = newVersion
-    if (isPackageLockManifest(file.data)) {
+    if (isPackageLockManifest(file.data))
       file.data.packages[''].version = newVersion
-    }
+
     await writeJsonFile(file)
     modified = true
   }

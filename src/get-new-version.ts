@@ -5,7 +5,7 @@ import semver, { SemVer, clean as cleanVersion, valid as isValidVersion } from '
 import type { BumpRelease, PromptRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
-import { isNextReleaseType, isPrerelease, releaseTypes } from './release-type'
+import { isPrerelease, releaseTypes } from './release-type'
 
 /**
  * Determines the new version number, possibly by prompting the user for it.
@@ -37,10 +37,9 @@ export async function getNewVersion(operation: Operation): Promise<Operation> {
 function getNextVersion(oldVersion: string, bump: BumpRelease): string {
   const oldSemVer = new SemVer(oldVersion)
 
-  let type = bump.type
-
-  if (isNextReleaseType(bump.type))
-    type = oldSemVer.prerelease.length ? 'prerelease' : 'patch'
+  const type = bump.type === 'next'
+    ? oldSemVer.prerelease.length ? 'prerelease' : 'patch'
+    : bump.type
 
   const newSemVer = oldSemVer.inc(type, bump.preid)
 
@@ -71,12 +70,8 @@ function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType 
   if (typeof parse?.prerelease[0] === 'string')
     preid = parse?.prerelease[0] || 'preid'
 
-  for (const type of releaseTypes)
-    next[type] = semver.inc(oldVersion, type, preid)!
-
-  next.next = parse?.prerelease?.length
-    ? semver.inc(oldVersion, 'prerelease', preid)!
-    : semver.inc(oldVersion, 'patch')!
+  for (const type of [...releaseTypes, 'next'] as const)
+    next[type] = getNextVersion(oldVersion, { type, preid })
 
   return next
 }

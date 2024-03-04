@@ -110,7 +110,7 @@ export interface VersionBumpOptions {
   /**
    * A callback that is provides information about the progress of the `versionBump()` function.
    */
-  progress?(progress: VersionBumpProgress): void
+  progress?: (progress: VersionBumpProgress) => void
 
   /**
    * Excute additional command after bumping and before commiting

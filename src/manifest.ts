@@ -34,12 +34,9 @@ export function isManifest(obj: any): obj is Manifest {
  * Determines whether the specified manifest is package-lock.json
  */
 export function isPackageLockManifest(
-  manifest: Manifest
+  manifest: Manifest,
 ): manifest is PackageLockManifest {
-  return (
-    typeof (manifest as PackageLockManifest).packages?.['']?.version ===
-    'string'
-  )
+  return (typeof (manifest as PackageLockManifest).packages?.['']?.version === 'string')
 }
 
 /**
