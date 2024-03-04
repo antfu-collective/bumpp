@@ -8,7 +8,7 @@ import type { VersionBumpResults } from './types/version-bump-results'
 type ProgressCallback = (progress: VersionBumpProgress) => void
 
 interface OperationState {
-  release: ReleaseType | 'next' | undefined
+  release: ReleaseType | undefined
   oldVersionSource: string
   oldVersion: string
   newVersion: string

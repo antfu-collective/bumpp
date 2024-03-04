@@ -63,7 +63,7 @@ function getNextVersion(oldVersion: string, bump: BumpRelease): string {
 /**
  * Returns the next version number for all release types.
  */
-function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType | 'next', string> {
+function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType, string> {
   const next: Record<string, string> = {}
 
   const parse = semver.parse(oldVersion)
@@ -122,7 +122,7 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
       },
     },
   ]) as {
-    release: ReleaseType | 'next' | 'none' | 'custom' | 'config'
+    release: ReleaseType | 'none' | 'custom' | 'config'
     custom?: string
   }
 
