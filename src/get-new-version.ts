@@ -70,7 +70,7 @@ function getNextVersions(oldVersion: string, preid: string): Record<ReleaseType 
   if (typeof parse?.prerelease[0] === 'string')
     preid = parse?.prerelease[0] || 'preid'
 
-  for (const type of [...releaseTypes, 'next'] as const)
+  for (const type of releaseTypes)
     next[type] = getNextVersion(oldVersion, { type, preid })
 
   return next

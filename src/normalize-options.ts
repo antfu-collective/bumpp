@@ -30,7 +30,7 @@ export interface PromptRelease {
  * A bump release, relative to the current version number.
  */
 export interface BumpRelease {
-  type: ReleaseType | 'next'
+  type: ReleaseType
   preid: string
 }
 

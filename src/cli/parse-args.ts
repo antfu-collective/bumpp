@@ -51,7 +51,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
     if (parsedArgs.options.files && parsedArgs.options.files.length > 0) {
       const firstArg = parsedArgs.options.files[0]
 
-      if (firstArg === 'prompt' || firstArg === 'next' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
+      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
         parsedArgs.options.release = firstArg
         parsedArgs.options.files.shift()
       }
