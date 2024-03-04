@@ -20,7 +20,6 @@ export async function loadBumpConfig(
 ) {
   const { config: bumppConfig } = await loadConfig<VersionBumpOptions>({
     name: 'bumpp',
-    defaults: bumpConfigDefaults,
     overrides: {
       ...(overrides as VersionBumpOptions),
     },
