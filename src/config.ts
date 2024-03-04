@@ -17,7 +17,7 @@ export const bumpConfigDefaults: VersionBumpOptions = {
 
 export async function loadBumpConfig(
   overrides?: Partial<VersionBumpOptions>,
-  cwd = process.cwd()
+  cwd = process.cwd(),
 ) {
   const name = 'bump'
   const configFile = findConfigFile(name, cwd)
