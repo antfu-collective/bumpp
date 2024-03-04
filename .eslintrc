@@ -1,8 +1,0 @@
-{
-  "extends": "@antfu",
-  "rules": {
-    "no-console": "off",
-    "no-undef": "off",
-    "promise/param-names": "off"
-  }
-}

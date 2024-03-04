@@ -9,14 +9,15 @@ Forked from [`version-bump-prompt`](https://github.com/JS-DevTools/version-bump-
 - Renamed to `bumpp` - so you can use `npx bumpp` directly.
 - Ships ESM and CJS bundles.
 - Add a new argument `--execute` to execute the command before committing.
-- Use current version's `preid` when avaliable.
+- Use the current version's `preid` when available.
 - Confirmation before bumping.
 - Enable `--commit` `--tag` `--push` by default. (opt-out by `--no-push`, etc.)
 - `-r` or `--recursive` to bump all packages in the monorepo.
-- Conventional Commits by default. 
-- Supports config file `bumpp.config.ts`:
+- Conventional Commits by default.
+- Supports config file `bump.config.ts`:
 
 ```ts
+// bump.config.ts
 import { defineConfig } from 'bumpp'
 
 export default defineConfig({

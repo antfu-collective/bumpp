@@ -1,6 +1,6 @@
-import { ReleaseType } from 'semver'
+import type { ReleaseType } from 'semver'
 
-export { ReleaseType }
+export type { ReleaseType }
 
 /**
  * The different types of pre-releases.

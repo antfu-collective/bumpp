@@ -85,6 +85,7 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
   const release = operation.options.release as PromptRelease
 
   const next = getNextVersions(oldVersion, release.preid)
+  const configCustomVersion = await operation.options.customVersion?.(oldVersion, semver)
 
   const PADDING = 13
   const answers = await prompts([
@@ -92,12 +93,17 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
       type: 'autocomplete',
       name: 'release',
       message: `Current version ${c.green(oldVersion)}`,
-      initial: 'next',
+      initial: configCustomVersion ? 'config' : 'next',
       choices: [
         { value: 'major', title: `${'major'.padStart(PADDING, ' ')} ${c.bold(next.major)}` },
         { value: 'minor', title: `${'minor'.padStart(PADDING, ' ')} ${c.bold(next.minor)}` },
         { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${c.bold(next.patch)}` },
         { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${c.bold(next.next)}` },
+        ...configCustomVersion
+          ? [
+              { value: 'config', title: `${'from config'.padStart(PADDING, ' ')} ${c.bold(configCustomVersion)}` },
+            ]
+          : [],
         { value: 'prepatch', title: `${'pre-patch'.padStart(PADDING, ' ')} ${c.bold(next.prepatch)}` },
         { value: 'preminor', title: `${'pre-minor'.padStart(PADDING, ' ')} ${c.bold(next.preminor)}` },
         { value: 'premajor', title: `${'pre-major'.padStart(PADDING, ' ')} ${c.bold(next.premajor)}` },
@@ -115,7 +121,7 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
       },
     },
   ]) as {
-    release: ReleaseType | 'next' | 'none' | 'custom'
+    release: ReleaseType | 'next' | 'none' | 'custom' | 'config'
     custom?: string
   }
 
@@ -123,13 +129,16 @@ async function promptForNewVersion(operation: Operation): Promise<Operation> {
     ? oldVersion
     : answers.release === 'custom'
       ? cleanVersion(answers.custom!)!
-      : next[answers.release]
+      : answers.release === 'config'
+        ? cleanVersion(configCustomVersion!)
+        : next[answers.release]
 
   if (!newVersion)
     process.exit(1)
 
   switch (answers.release) {
     case 'custom':
+    case 'config':
     case 'next':
     case 'none':
       return operation.update({ newVersion })
