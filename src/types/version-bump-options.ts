@@ -35,7 +35,7 @@ export interface VersionBumpOptions {
    * with the new version number.  If the message string does _not_ contain any `%s` placeholders,
    * then the new version number will be appended to the message.
    *
-   * Defaults to `false`.
+   * Defaults to `true`.
    */
   commit?: boolean | string
 
@@ -45,14 +45,14 @@ export interface VersionBumpOptions {
    * with the new version number.  If the tag string does _not_ contain any `%s` placeholders,
    * then the new version number will be appended to the tag.
    *
-   * Defaults to `false`.
+   * Defaults to `true`.
    */
   tag?: boolean | string
 
   /**
    * Indicates whether to push the git commit and tag.
    *
-   * Defaults to `false`.
+   * Defaults to `true`.
    */
   push?: boolean
 
@@ -67,7 +67,7 @@ export interface VersionBumpOptions {
   /**
    * Prompt for confirmation
    *
-   * @default false
+   * @default true
    */
   confirm?: boolean
 
