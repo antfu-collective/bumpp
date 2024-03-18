@@ -1,10 +1,6 @@
 import process from 'node:process'
-import fs from 'node:fs/promises'
-import fsSync from 'node:fs'
 import { valid as isValidVersion } from 'semver'
 import cac from 'cac'
-import c from 'picocolors'
-import yaml from 'js-yaml'
 import { isReleaseType } from '../release-type'
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import { version } from '../../package.json'
@@ -55,35 +51,6 @@ export async function parseArgs(): Promise<ParsedArgs> {
       if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
         parsedArgs.options.release = firstArg
         parsedArgs.options.files.shift()
-      }
-    }
-
-    if (parsedArgs.options.recursive) {
-      if (parsedArgs.options.files?.length) {
-        console.log(c.yellow('The --recursive option is ignored when files are specified'))
-      }
-      else {
-        parsedArgs.options.files = [
-          'package.json',
-          'package-lock.json',
-          'packages/**/package.json',
-          'jsr.json',
-          'jsr.jsonc',
-        ]
-
-        // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
-        if (fsSync.existsSync('pnpm-workspace.yaml')) {
-          // read pnpm-workspace.yaml
-          const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8')
-          // parse yaml
-          const workspaces = yaml.load(pnpmWorkspace) as { packages: string[] }
-          // append package.json to each workspace string
-          const workspacesWithPackageJson = workspaces.packages.map(workspace => `${workspace}/package.json`)
-          // start with ! or already in files should be excluded
-          const withoutExcludedWorkspaces = workspacesWithPackageJson.filter(workspace => !workspace.startsWith('!') && !parsedArgs.options.files?.includes(workspace))
-          // add to files
-          parsedArgs.options.files = parsedArgs.options.files.concat(withoutExcludedWorkspaces)
-        }
       }
     }
 
