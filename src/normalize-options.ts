@@ -105,10 +105,6 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   else if (raw.commit || tag || push)
     commit = { all, noVerify, message: 'chore: release v' }
 
-  raw.files = raw.files?.length
-    ? raw.files
-    : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc']
-
   if (recursive) {
     if (raw.files?.length) {
       console.log(c.yellow('The --recursive option is ignored when files are specified'))
@@ -136,6 +132,11 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
         raw.files = raw.files.concat(withoutExcludedWorkspaces)
       }
     }
+  }
+  else {
+    raw.files = raw.files?.length
+      ? raw.files
+      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc']
   }
 
   const files = await fg(
