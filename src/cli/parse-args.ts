@@ -1,6 +1,7 @@
 import process from 'node:process'
 import { valid as isValidVersion } from 'semver'
 import cac from 'cac'
+import c from 'picocolors'
 import { isReleaseType } from '../release-type'
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import { version } from '../../package.json'
@@ -53,6 +54,9 @@ export async function parseArgs(): Promise<ParsedArgs> {
         parsedArgs.options.files.shift()
       }
     }
+
+    if (parsedArgs.options.recursive && parsedArgs.options.files?.length)
+      console.log(c.yellow('The --recursive option is ignored when files are specified'))
 
     return parsedArgs
   }
