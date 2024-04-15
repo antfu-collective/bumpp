@@ -35,4 +35,28 @@ describe('loadCliArgs', async () => {
 
     expect(result.args.commit).toBe(false)
   })
+
+  it('sets the commit property to "release: %s" if `--commit=release: %s` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--commit=release: %s'])
+
+    expect(result.args.commit).toBe('release: %s')
+  })
+
+  it('sets the commit property to "release: %s" if `-c=release: %s` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '-c=release: %s'])
+
+    expect(result.args.commit).toBe('release: %s')
+  })
+
+  it('sets the commit property to "release: %s" if `-c "release: %s"` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '-c', 'release: %s'])
+
+    expect(result.args.commit).toBe('release: %s')
+  })
+
+  it('should not match args that contains `--commit` or `-c`', () => {
+    const result = loadCliArgs([...defaultArgs, '--commitrc'])
+
+    expect(result.args.commit).toBe(undefined)
+  })
 })
