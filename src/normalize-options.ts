@@ -111,6 +111,8 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       'packages/**/package.json',
       'jsr.json',
       'jsr.jsonc',
+      'deno.json',
+      'deno.jsonc',
     ]
 
     // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
@@ -130,7 +132,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   else {
     raw.files = raw.files?.length
       ? raw.files
-      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc']
+      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc', 'deno.json', 'deno.jsonc']
   }
 
   const files = await fg(

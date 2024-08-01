@@ -84,7 +84,7 @@ export interface VersionBumpOptions {
    * (ReadMe files, config files, source code, etc.) it will simply do a global replacement
    * of the old version number with the new version number.
    *
-   * Defaults to ["package.json", "package-lock.json", "jsr.json", "jsr.jsonc"]
+   * Defaults to ["package.json", "package-lock.json", "jsr.json", "jsr.jsonc", "deno.json", "deno.jsonc"].
    */
   files?: string[]
 

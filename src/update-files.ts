@@ -44,6 +44,7 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
     case 'bower.json':
     case 'component.json':
     case 'jsr.json':
+    case 'deno.json':
       return updateManifestFile(relPath, operation)
 
     default:
