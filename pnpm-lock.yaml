@@ -51,12 +51,6 @@ importers:
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
-      detect-indent:
-        specifier: ^7.0.1
-        version: 7.0.1
-      detect-newline:
-        specifier: ^4.0.1
-        version: 4.0.1
       eslint:
         specifier: ^9.8.0
         version: 9.8.0
@@ -1242,14 +1236,6 @@ packages:
 
   destr@2.0.3:
     resolution: {integrity: sha512-2N3BOUU4gYMpTP24s5rF5iP7BDr7uNTCs4ozw3kf/eKfvWSIu93GEBi5m427YoyJoeOzQ5smuu4nNAPGb8idSQ==}
-
-  detect-indent@7.0.1:
-    resolution: {integrity: sha512-Mc7QhQ8s+cLrnUfU/Ji94vG/r8M26m8f++vyres4ZoojaRDpZ1eSIh/EpzLNwlWuvzSZ3UbDFspjFvTDXe6e/g==}
-    engines: {node: '>=12.20'}
-
-  detect-newline@4.0.1:
-    resolution: {integrity: sha512-qE3Veg1YXzGHQhlA6jzebZN2qVf6NX+A7m7qlhCGG30dJixrAQhYOsJjsnBjJkCSmuOPpCk30145fr8FV0bzog==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -4207,10 +4193,6 @@ snapshots:
   deps-regex@0.1.4: {}
 
   destr@2.0.3: {}
-
-  detect-indent@7.0.1: {}
-
-  detect-newline@4.0.1: {}
 
   dir-glob@3.0.1:
     dependencies:

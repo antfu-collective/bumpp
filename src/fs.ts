@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import detectIndent from 'detect-indent'
-import { detectNewline } from 'detect-newline'
+import * as jsonc from 'jsonc-parser'
 
 /**
  * Describes a plain-text file.
@@ -12,37 +11,42 @@ export interface TextFile {
 }
 
 /**
+ * Modifies a JSON file.
+ */
+type ModifyUnion = [jsonc.JSONPath, unknown]
+
+/**
  * Describes a JSON file.
  */
 interface JsonFile {
-  path: string
-  data: unknown
-  indent: string
-  newline: string | undefined
+  path: Readonly<string>
+  text: Readonly<string>
+  data: Readonly<unknown>
+  modified: ModifyUnion[]
 }
 
 /**
- * Reads a JSON file and returns the parsed data.
+ * Reads a JSON/JSONC file and returns the parsed data.
  */
-export async function readJsonFile(name: string, cwd: string): Promise<JsonFile> {
+export async function readJsoncFile(name: string, cwd: string): Promise<JsonFile> {
   const file = await readTextFile(name, cwd)
-  const data = JSON.parse(file.data) as unknown
-  const indent = detectIndent(file.data).indent
-  const newline = detectNewline(file.data)
+  const data = jsonc.parse(file.data)
+  const modified: ModifyUnion[] = []
 
-  return { ...file, data, indent, newline }
+  return { ...file, data, modified, text: file.data }
 }
 
 /**
- * Writes the given data to the specified JSON file.
+ * Writes the given data to the specified JSON/JSONC file.
  */
-export async function writeJsonFile(file: JsonFile): Promise<void> {
-  let json = JSON.stringify(file.data, undefined, file.indent)
+export async function writeJsoncFile(file: JsonFile): Promise<void> {
+  let newJSON = file.text
+  for (const [key, value] of file.modified) {
+    const edit = (jsonc.modify(file.text, key, value, {}))
+    newJSON = jsonc.applyEdits(newJSON, edit)
+  }
 
-  if (file.newline)
-    json += file.newline
-
-  return writeTextFile({ ...file, data: json })
+  return writeTextFile({ ...file, data: newJSON })
 }
 
 /**
