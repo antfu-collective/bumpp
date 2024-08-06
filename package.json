@@ -65,6 +65,7 @@
     "escalade": "^3.1.2",
     "fast-glob": "^3.3.2",
     "js-yaml": "^4.1.0",
+    "jsonc-parser": "^3.3.1",
     "prompts": "^2.4.2",
     "semver": "^7.6.3"
   },
