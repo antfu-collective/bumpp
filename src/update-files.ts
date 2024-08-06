@@ -1,5 +1,5 @@
 import * as path from 'node:path'
-import { readJsonFile, readTextFile, writeJsonFile, writeTextFile } from './fs'
+import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
 import { isManifest, isPackageLockManifest } from './manifest'
 import type { Operation } from './operation'
 import { ProgressEvent } from './types/version-bump-progress'
@@ -65,14 +65,14 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
   const { newVersion } = operation.state
   let modified = false
 
-  const file = await readJsonFile(relPath, cwd)
+  const file = await readJsoncFile(relPath, cwd)
 
   if (isManifest(file.data) && file.data.version !== newVersion) {
-    file.data.version = newVersion
+    file.modified.push([['version'], newVersion])
     if (isPackageLockManifest(file.data))
-      file.data.packages[''].version = newVersion
+      file.modified.push([['packages', '', 'version'], newVersion])
 
-    await writeJsonFile(file)
+    await writeJsoncFile(file)
     modified = true
   }
 
