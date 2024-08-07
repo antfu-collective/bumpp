@@ -1,5 +1,5 @@
 import { valid as isValidVersion } from 'semver'
-import { readJsonFile } from './fs'
+import { readJsoncFile } from './fs'
 import { isManifest } from './manifest'
 import type { Operation } from './operation'
 
@@ -50,7 +50,7 @@ export async function getCurrentVersion(operation: Operation): Promise<Operation
  */
 async function readVersion(file: string, cwd: string): Promise<string | undefined> {
   try {
-    const { data: manifest } = await readJsonFile(file, cwd)
+    const { data: manifest } = await readJsoncFile(file, cwd)
 
     if (isManifest(manifest)) {
       if (isValidVersion(manifest.version))

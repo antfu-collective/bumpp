@@ -1,5 +1,5 @@
 import * as ezSpawn from '@jsdevtools/ez-spawn'
-import { readJsonFile } from './fs'
+import { readJsoncFile } from './fs'
 import type { Manifest } from './manifest'
 import { isManifest } from './manifest'
 import type { Operation } from './operation'
@@ -13,7 +13,7 @@ export async function runNpmScript(script: NpmScript, operation: Operation): Pro
   const { cwd, ignoreScripts } = operation.options
 
   if (!ignoreScripts) {
-    const { data: manifest } = await readJsonFile('package.json', cwd)
+    const { data: manifest } = await readJsoncFile('package.json', cwd)
 
     if (isManifest(manifest) && hasScript(manifest, script)) {
       await ezSpawn.async('npm', ['run', script, '--silent'], { stdio: 'inherit' })
