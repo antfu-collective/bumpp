@@ -24,6 +24,10 @@ export async function getCurrentVersion(operation: Operation): Promise<Operation
   if (!filesToCheck.includes('deno.json'))
     filesToCheck.push('deno.json')
 
+  // Always check deno.jsonc
+  if (!filesToCheck.includes('deno.jsonc'))
+    filesToCheck.push('deno.jsonc')
+
   // Check each file, in order, and return the first valid version number we find
   for (const file of filesToCheck) {
     const version = await readVersion(file, cwd)
