@@ -1,4 +1,5 @@
 import * as path from 'node:path'
+import { existsSync } from 'node:fs'
 import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
 import { isManifest, isPackageLockManifest } from './manifest'
 import type { Operation } from './operation'
@@ -36,6 +37,10 @@ export async function updateFiles(operation: Operation): Promise<Operation> {
  * @returns - `true` if the file was actually modified
  */
 async function updateFile(relPath: string, operation: Operation): Promise<boolean> {
+  if (!existsSync(relPath)) {
+    return false
+  }
+
   const name = path.basename(relPath).trim().toLowerCase()
 
   switch (name) {
