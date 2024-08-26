@@ -41,7 +41,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         ignoreScripts: args.ignoreScripts,
         currentVersion: args.currentVersion,
         execute: args.execute,
-        recursive: !!args.recursive,
+        recursive: args.recursive,
       }),
     }
 
