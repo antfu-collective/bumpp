@@ -35,6 +35,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         tag: args.tag,
         push: args.push,
         all: args.all,
+        noGitCheck: args.noGitCheck,
         confirm: !args.yes,
         noVerify: !args.verify,
         files: [...(args['--'] || []), ...resultArgs],
@@ -74,6 +75,7 @@ export function loadCliArgs(argv = process.argv) {
     .usage('[...files]')
     .option('--preid <preid>', 'ID for prerelease')
     .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
+    .option('--no-git-check', `Skip git check`, { default: bumpConfigDefaults.noGitCheck })
     .option('-c, --commit [msg]', 'Commit message', { default: true })
     .option('--no-commit', 'Skip commit', { default: false })
     .option('-t, --tag [tag]', 'Tag name', { default: true })

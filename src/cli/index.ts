@@ -29,7 +29,7 @@ export async function main(): Promise<void> {
       process.exit(ExitCode.Success)
     }
     else {
-      if (!options.all) {
+      if (!options.all && !options.noGitCheck) {
         checkGitStatus()
       }
 

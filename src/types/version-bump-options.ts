@@ -65,6 +65,13 @@ export interface VersionBumpOptions {
   all?: boolean
 
   /**
+   * Indicates whether the git working tree needs to be cleared before bumping.
+   *
+   * Defaults to `true`.
+   */
+  noGitCheck?: boolean
+
+  /**
    * Prompt for confirmation
    *
    * @default true
