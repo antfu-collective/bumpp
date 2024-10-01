@@ -139,6 +139,11 @@ export interface VersionBumpOptions {
    * Custom function to provide the version number
    */
   customVersion?: (currentVersion: string, semver: typeof _semver) => Promise<string | void> | string | void
+
+  /**
+   * Custom the workspaces to bump.
+   */
+  workspaces?: string[]
 }
 
 /**
