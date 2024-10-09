@@ -12,6 +12,7 @@ Forked from [`version-bump-prompt`](https://github.com/JS-DevTools/version-bump-
 - Use the current version's `preid` when available.
 - Confirmation before bumping.
 - Enable `--commit` `--tag` `--push` by default. (opt-out by `--no-push`, etc.)
+- `--sign` to sign the commit and tag.
 - `-r` or `--recursive` to bump all packages in the monorepo.
 - Conventional Commits by default.
 - Supports config file `bump.config.ts`:

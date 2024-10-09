@@ -8,6 +8,7 @@ export const bumpConfigDefaults: VersionBumpOptions = {
   commit: true,
   push: true,
   tag: true,
+  sign: false,
   recursive: false,
   noVerify: false,
   confirm: true,
@@ -30,6 +31,7 @@ export async function loadBumpConfig(
     },
     cwd: configFile ? dirname(configFile) : cwd,
   })
+  console.log(config)
   return config!
 }
 

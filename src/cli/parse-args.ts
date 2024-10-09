@@ -33,6 +33,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         preid: args.preid,
         commit: args.commit,
         tag: args.tag,
+        sign: args.sign,
         push: args.push,
         all: args.all,
         confirm: !args.yes,
@@ -78,6 +79,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--no-commit', 'Skip commit', { default: false })
     .option('-t, --tag [tag]', 'Tag name', { default: true })
     .option('--no-tag', 'Skip tag', { default: false })
+    .option('--sign', 'Sign commit and tag')
     .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
     .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
     .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)

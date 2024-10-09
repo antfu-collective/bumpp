@@ -22,6 +22,10 @@ export async function gitCommit(operation: Operation): Promise<Operation> {
     // Bypass git commit hooks
     args.push('--no-verify')
   }
+  // Sign the commit with a GPG/SSH key
+  if (operation.options.sign) {
+    args.push('--gpg-sign')
+  }
 
   // Create the commit message
   const commitMessage = formatVersionString(message, newVersion)
@@ -59,6 +63,11 @@ export async function gitTag(operation: Operation): Promise<Operation> {
   // Create the Tag name
   const tagName = formatVersionString(tag.name, newVersion)
   args.push(tagName)
+
+  // Sign the tag with a GPG/SSH key
+  if (operation.options.sign) {
+    args.push('--sign')
+  }
 
   await ezSpawn.async('git', ['tag', ...args])
 

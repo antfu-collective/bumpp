@@ -50,6 +50,13 @@ export interface VersionBumpOptions {
   tag?: boolean | string
 
   /**
+   * Sign the git commit and tag with a configured key (GPG/SSH).
+   *
+   * Defaults to `false`.
+   */
+  sign?: boolean
+
+  /**
    * Indicates whether to push the git commit and tag.
    *
    * Defaults to `true`.

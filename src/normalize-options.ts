@@ -55,6 +55,7 @@ export interface NormalizedOptions {
   tag?: {
     name: string
   }
+  sign?: boolean
   push: boolean
   files: string[]
   cwd: string
@@ -72,6 +73,7 @@ export interface NormalizedOptions {
 export async function normalizeOptions(raw: VersionBumpOptions): Promise<NormalizedOptions> {
   // Set the simple properties first
   const preid = typeof raw.preid === 'string' ? raw.preid : 'beta'
+  const sign = Boolean(raw.sign)
   const push = Boolean(raw.push)
   const all = Boolean(raw.all)
   const noVerify = Boolean(raw.noVerify)
@@ -173,6 +175,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     release,
     commit,
     tag,
+    sign,
     push,
     files,
     cwd,
