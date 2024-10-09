@@ -48,6 +48,7 @@
   "scripts": {
     "clean": "rimraf .nyc_output coverage dist",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "build": "tsup src/index.ts src/cli/index.ts --format esm,cjs --dts --clean",
     "watch": "npm run build -- --watch src",
     "start": "esno src/cli/run.ts",
