@@ -3,7 +3,7 @@ import type { VersionBumpOptions } from './types/version-bump-options'
 import fsSync from 'node:fs'
 import fs from 'node:fs/promises'
 import process from 'node:process'
-import fg from 'fast-glob'
+import { glob } from 'tinyglobby'
 import yaml from 'js-yaml'
 import { isReleaseType } from './release-type'
 
@@ -138,11 +138,12 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc', 'deno.json', 'deno.jsonc']
   }
 
-  const files = await fg(
+  const files = await glob(
     raw.files,
     {
       cwd,
       onlyFiles: true,
+      expandDirectories: false,
       ignore: [
         '**/{.git,node_modules,bower_components,__tests__,fixtures,fixture}/**',
       ],
