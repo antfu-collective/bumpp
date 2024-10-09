@@ -59,4 +59,10 @@ describe('loadCliArgs', async () => {
 
     expect(result.args.commit).toBe(undefined)
   })
+
+  it('should have sign property set to true if `--sign` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--sign'])
+
+    expect(result.args.sign).toBe(true)
+  })
 })
