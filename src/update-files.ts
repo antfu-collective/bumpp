@@ -74,7 +74,13 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
 
   const file = await readJsoncFile(relPath, cwd)
 
-  if (isManifest(file.data) && file.data.version !== newVersion) {
+  if (!isManifest(file.data)) {
+    return modified
+  }
+  if (file.data.version == null) {
+    return modified
+  }
+  if (file.data.version !== newVersion) {
     file.modified.push([['version'], newVersion])
     if (isPackageLockManifest(file.data))
       file.modified.push([['packages', '', 'version'], newVersion])
