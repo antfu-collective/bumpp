@@ -72,9 +72,14 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
   await updateFiles(operation)
 
   if (operation.options.execute) {
-    console.log(symbols.info, 'Executing script', operation.options.execute)
-    await ezSpawn.async(operation.options.execute, { stdio: 'inherit' })
-    console.log(symbols.success, 'Script finished')
+    if (typeof operation.options.execute === 'function') {
+      await operation.options.execute(operation)
+    }
+    else {
+      console.log(symbols.info, 'Executing script', operation.options.execute)
+      await ezSpawn.async(operation.options.execute, { stdio: 'inherit' })
+      console.log(symbols.success, 'Script finished')
+    }
   }
 
   // Run npm version script, if any
@@ -101,7 +106,7 @@ function printSummary(operation: Operation) {
   if (operation.options.tag)
     console.log(`     tag ${c.bold(formatVersionString(operation.options.tag.name, operation.state.newVersion))}`)
   if (operation.options.execute)
-    console.log(` execute ${c.bold(operation.options.execute)}`)
+    console.log(` execute ${c.bold(typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
   if (operation.options.push)
     console.log(`    push ${c.cyan(c.bold('yes'))}`)
   console.log()

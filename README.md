@@ -8,7 +8,7 @@ Forked from [`version-bump-prompt`](https://github.com/JS-DevTools/version-bump-
 
 - Renamed to `bumpp` - so you can use `npx bumpp` directly.
 - Ships ESM and CJS bundles.
-- Add a new argument `--execute` to execute the command before committing.
+- Add a new argument `--execute` to execute the command, or execute a function before committing.
 - Use the current version's `preid` when available.
 - Confirmation before bumping.
 - Enable `--commit` `--tag` `--push` by default. (opt-out by `--no-push`, etc.)
@@ -23,5 +23,8 @@ import { defineConfig } from 'bumpp'
 
 export default defineConfig({
   // ...options
+  execute(config) {
+    // ...`execute` could receive a function here
+  }
 })
 ```

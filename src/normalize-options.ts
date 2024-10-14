@@ -1,10 +1,11 @@
+import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
 import type { VersionBumpOptions } from './types/version-bump-options'
 import fsSync from 'node:fs'
 import fs from 'node:fs/promises'
 import process from 'node:process'
-import { glob } from 'tinyglobby'
 import yaml from 'js-yaml'
+import { glob } from 'tinyglobby'
 import { isReleaseType } from './release-type'
 
 interface Interface {
@@ -61,7 +62,7 @@ export interface NormalizedOptions {
   cwd: string
   interface: Interface
   ignoreScripts: boolean
-  execute?: string
+  execute?: string | ((config?: Operation) => void | PromiseLike<void>)
   printCommits?: boolean
   customVersion?: VersionBumpOptions['customVersion']
   currentVersion?: string

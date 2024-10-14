@@ -1,4 +1,5 @@
 import type _semver from 'semver'
+import type { Operation } from '../operation'
 import type { VersionBumpProgress } from './version-bump-progress'
 
 /**
@@ -135,7 +136,7 @@ export interface VersionBumpOptions {
   /**
    * Excute additional command after bumping and before commiting
    */
-  execute?: string
+  execute?: string | ((config?: Operation) => void | PromiseLike<void>)
 
   /**
    * Bump the files recursively for monorepo. Only works without `files` option.
