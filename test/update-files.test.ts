@@ -6,11 +6,11 @@ import { Operation } from '../src/operation'
 import { updateFiles } from '../src/update-files'
 
 beforeEach(async () => {
-  mkdir(join(cwd(), 'test', 'update-files', 'testdata'), { recursive: true }).catch(() => { })
+  await mkdir(join(cwd(), 'test', 'update-files', 'testdata'), { recursive: true }).catch(() => { })
 })
 
 afterEach(async () => {
-  rmdir(join(cwd(), 'test', 'update-files', 'testdata'), { recursive: true }).catch(() => { })
+  await rmdir(join(cwd(), 'test', 'update-files', 'testdata'), { recursive: true }).catch(() => { })
 })
 
 it('should skip to modify the manifest file if version field is not specified', async () => {
