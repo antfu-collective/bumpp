@@ -43,6 +43,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         ignoreScripts: args.ignoreScripts,
         currentVersion: args.currentVersion,
         execute: args.execute,
+        printCommits: args.printCommits,
         recursive: args.recursive,
       }),
     }
@@ -90,7 +91,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('-q, --quiet', 'Quiet mode')
     .option('-v, --version <version>', 'Target version')
     .option('--current-version <version>', 'Current version')
-    .option('--print-commits', 'Print recent commits', { default: true })
+    .option('--print-commits', 'Print recent commits')
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
     .help()
 
