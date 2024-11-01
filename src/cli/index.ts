@@ -1,8 +1,7 @@
 import type { VersionBumpProgress } from '../types/version-bump-progress'
 import process from 'node:process'
-import symbols from 'log-symbols'
 import * as ezSpawn from '@jsdevtools/ez-spawn'
-import { version as packageVersion } from '../../package.json'
+import symbols from 'log-symbols'
 import { ProgressEvent } from '../types/version-bump-progress'
 import { versionBump } from '../version-bump'
 import { ExitCode } from './exit-code'
@@ -20,12 +19,8 @@ export async function main(): Promise<void> {
     // Parse the command-line arguments
     const { help, version, quiet, options } = await parseArgs()
 
-    if (help) {
-      process.exit(ExitCode.Success)
-    }
-    else if (version) {
-      // Show the version number and exit
-      console.log(packageVersion)
+    if (help || version) {
+      // Will be handled by cac, just need to exit
       process.exit(ExitCode.Success)
     }
     else {
