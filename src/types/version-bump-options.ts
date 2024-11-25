@@ -134,9 +134,9 @@ export interface VersionBumpOptions {
   progress?: (progress: VersionBumpProgress) => void
 
   /**
-   * Excute additional command after bumping and before commiting
+   * Execute additional command after bumping and before committing
    */
-  execute?: string | ((config?: Operation) => void | PromiseLike<void>)
+  execute?: string | ((config: Operation) => void | PromiseLike<void>)
 
   /**
    * Bump the files recursively for monorepo. Only works without `files` option.

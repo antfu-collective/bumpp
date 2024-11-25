@@ -62,7 +62,7 @@ export interface NormalizedOptions {
   cwd: string
   interface: Interface
   ignoreScripts: boolean
-  execute?: string | ((config?: Operation) => void | PromiseLike<void>)
+  execute?: string | ((config: Operation) => void | PromiseLike<void>)
   printCommits?: boolean
   customVersion?: VersionBumpOptions['customVersion']
   currentVersion?: string
