@@ -36,20 +36,21 @@ export function parseCommits(raw: string) {
     .map((line): ParsedCommit => {
       const [hash, ...parts] = line.split(' ')
       const message = parts.join(' ')
-      const match = message.match(/^(\w+)(!)?(\([^)]+\))?:(.*)$/)
+      const match = message.match(/^(\w+)(!)?(\([^)]+\))?(!)?:(.*)$/)
       if (match) {
         let color = messageColorMap[match[1].toLowerCase()] || ((c: string) => c)
-        if (match[2] === '!') {
+        const breaking = match[2] === '!' || match[4] === '!'
+        if (breaking) {
           color = s => c.inverse(c.red(s))
         }
-        const tag = [match[1], match[2]].filter(Boolean).join('')
+        const tag = [match[1], match[2], match[4]].filter(Boolean).join('')
         const scope = match[3] || ''
         return {
           hash,
           tag,
-          message: match[4].trim(),
+          message: match[5].trim(),
           scope,
-          breaking: match[2] === '!',
+          breaking,
           color,
         }
       }

@@ -19,6 +19,8 @@ bfad9f238 fix!(extractor-arbitrary-variants): skip extracting encoded html entit
 35297359b docs(rules): explain symbols.layer in symbols docs (#4145)
 9be7b299d feat(core): add symbols.layer (#4143)
 bd4d8e998 docs(config): layers using variants (#4144)
+67f3237dc refactor!: make arbitrary variants extractor callable (#4239)
+5420b1316 feat(core)!: deprecate \`new UnoGenerator\`, make \`createGenerator()\` async (#4268)
 `
 
 it('parseCommits', async () => {
@@ -27,6 +29,22 @@ it('parseCommits', async () => {
   expect(parsed)
     .toMatchInlineSnapshot(`
       [
+        {
+          "breaking": true,
+          "color": [Function],
+          "hash": "5420b1316",
+          "message": "deprecate \`new UnoGenerator\`, make \`createGenerator()\` async (#4268)",
+          "scope": "(core)",
+          "tag": "feat!",
+        },
+        {
+          "breaking": true,
+          "color": [Function],
+          "hash": "67f3237dc",
+          "message": "make arbitrary variants extractor callable (#4239)",
+          "scope": "",
+          "tag": "refactor!",
+        },
         {
           "breaking": false,
           "color": [Function],
