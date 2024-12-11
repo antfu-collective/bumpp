@@ -77,9 +77,11 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
     }
     else {
       console.log(symbols.info, 'Executing script', operation.options.execute)
-      await x(operation.options.execute, [], {
+      const [command, ...args] = operation.options.execute.split(' ')
+      await x(command, args, {
         nodeOptions: {
           stdio: 'inherit',
+          cwd: operation.options.cwd,
         },
       })
       console.log(symbols.success, 'Script finished')
