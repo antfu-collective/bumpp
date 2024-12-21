@@ -4,8 +4,7 @@ import process from 'node:process'
 import symbols from 'log-symbols'
 import c from 'picocolors'
 import prompts from 'prompts'
-// @ts-expect-error missing types
-import parseCommand from 'shell-quote/parse'
+import { tokenizeArgs } from 'args-tokenizer';
 import { x } from 'tinyexec'
 import { getCurrentVersion } from './get-current-version'
 import { getNewVersion } from './get-new-version'
@@ -78,7 +77,7 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
       await operation.options.execute(operation)
     }
     else {
-      const [command, ...args] = parseCommand(operation.options.execute)
+      const [command, ...args] = tokenizeArgs(operation.options.execute)
       console.log(symbols.info, 'Executing script', command, ...args)
       await x(command, args, {
         nodeOptions: {
