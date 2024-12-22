@@ -1,10 +1,10 @@
 import type { VersionBumpOptions } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
+import { tokenizeArgs } from 'args-tokenizer'
 import symbols from 'log-symbols'
 import c from 'picocolors'
 import prompts from 'prompts'
-import { tokenizeArgs } from 'args-tokenizer';
 import { x } from 'tinyexec'
 import { getCurrentVersion } from './get-current-version'
 import { getNewVersion } from './get-new-version'
