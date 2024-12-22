@@ -76,7 +76,7 @@
     "@types/node": "^22.10.1",
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.5.8",
-    "args-tokenizer": "^0.2.0",
+    "args-tokenizer": "^0.2.1",
     "eslint": "^9.16.0",
     "esno": "^4.8.0",
     "log-symbols": "^7.0.0",
