@@ -37,7 +37,7 @@ export async function updateFiles(operation: Operation): Promise<Operation> {
  * @returns - `true` if the file was actually modified
  */
 async function updateFile(relPath: string, operation: Operation): Promise<boolean> {
-  if (!existsSync(relPath)) {
+  if (!existsSync(path.join(operation.options.cwd, relPath))) {
     return false
   }
 

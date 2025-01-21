@@ -42,7 +42,7 @@ export async function readJsoncFile(name: string, cwd: string): Promise<JsonFile
 export async function writeJsoncFile(file: JsonFile): Promise<void> {
   let newJSON = file.text
   for (const [key, value] of file.modified) {
-    const edit = (jsonc.modify(file.text, key, value, {}))
+    const edit = (jsonc.modify(newJSON, key, value, {}))
     newJSON = jsonc.applyEdits(newJSON, edit)
   }
 
