@@ -42,7 +42,7 @@ function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitC
   if (bump.type === 'next') {
     type = oldSemVer.prerelease.length ? 'prerelease' : 'patch'
   }
-  else if (bump.type === 'semver') {
+  else if (bump.type === 'conventional') {
     type = oldSemVer.prerelease.length ? 'prerelease' : determineSemverChange(commits)
   }
   else {
@@ -121,8 +121,8 @@ async function promptForNewVersion(operation: Operation, commits: GitCommit[]): 
         { value: 'major', title: `${'major'.padStart(PADDING, ' ')} ${c.bold(next.major)}` },
         { value: 'minor', title: `${'minor'.padStart(PADDING, ' ')} ${c.bold(next.minor)}` },
         { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${c.bold(next.patch)}` },
-        { value: 'semver', title: `${'semver'.padStart(PADDING, ' ')} ${c.bold(next.semver)}` },
         { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${c.bold(next.next)}` },
+        { value: 'conventional', title: `${'conventional'.padStart(PADDING, ' ')} ${c.bold(next.conventional)}` },
         ...configCustomVersion
           ? [
               { value: 'config', title: `${'from config'.padStart(PADDING, ' ')} ${c.bold(configCustomVersion)}` },
@@ -164,7 +164,7 @@ async function promptForNewVersion(operation: Operation, commits: GitCommit[]): 
     case 'custom':
     case 'config':
     case 'next':
-    case 'semver':
+    case 'conventional':
     case 'none':
       return operation.update({ newVersion })
 
