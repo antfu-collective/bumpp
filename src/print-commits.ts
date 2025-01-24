@@ -1,4 +1,4 @@
-import type { GitCommit } from './git'
+import type { GitCommit } from 'tiny-conventional-commits-parser'
 import c from 'picocolors'
 
 const messageColorMap: Record<string, (c: string) => string> = {

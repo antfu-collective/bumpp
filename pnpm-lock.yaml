@@ -32,6 +32,9 @@ importers:
       semver:
         specifier: ^7.6.3
         version: 7.6.3
+      tiny-conventional-commits-parser:
+        specifier: ^0.0.1
+        version: 0.0.1
       tinyexec:
         specifier: ^0.3.2
         version: 0.3.2
@@ -3073,6 +3076,9 @@ packages:
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
+
+  tiny-conventional-commits-parser@0.0.1:
+    resolution: {integrity: sha512-N5+AZWdBeHNSgTIaxvx0+9mFrnW4H1BbjQ84H7i3TuWSkno8Hju886hLaHZhE/hYEKrfrfl/uHurqpZJHDuYGQ==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -6547,6 +6553,8 @@ snapshots:
   throat@6.0.2: {}
 
   through@2.3.8: {}
+
+  tiny-conventional-commits-parser@0.0.1: {}
 
   tinybench@2.9.0: {}
 

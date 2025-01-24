@@ -1,5 +1,6 @@
 {
   "name": "bumpp",
+  "type": "module",
   "version": "9.10.2",
   "packageManager": "pnpm@9.15.4",
   "description": "Bump version, commit changes, tag, and push to Git",
@@ -68,6 +69,7 @@
     "package-manager-detector": "^0.2.8",
     "prompts": "^2.4.2",
     "semver": "^7.6.3",
+    "tiny-conventional-commits-parser": "^0.0.1",
     "tinyexec": "^0.3.2",
     "tinyglobby": "^0.2.10"
   },

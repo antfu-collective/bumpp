@@ -1,4 +1,4 @@
-import type { GitCommit } from './git'
+import type { GitCommit } from 'tiny-conventional-commits-parser'
 import type { BumpRelease, PromptRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
