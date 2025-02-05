@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      args-tokenizer:
+        specifier: ^0.3.0
+        version: 0.3.0
       c12:
         specifier: ^2.0.1
         version: 2.0.1
@@ -54,9 +57,6 @@ importers:
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
-      args-tokenizer:
-        specifier: ^0.3.0
-        version: 0.3.0
       eslint:
         specifier: ^9.19.0
         version: 9.19.0(jiti@2.4.2)
