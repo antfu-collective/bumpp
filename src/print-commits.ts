@@ -1,5 +1,5 @@
 import type { GitCommit } from 'tiny-conventional-commits-parser'
-import c from 'picocolors'
+import c from 'ansis'
 
 const messageColorMap: Record<string, (c: string) => string> = {
   feat: c.green,
@@ -35,13 +35,13 @@ export function formatParsedCommits(commits: GitCommit[]) {
   return commits.map((commit) => {
     let color = messageColorMap[commit.type] || ((c: string) => c)
     if (commit.isBreaking) {
-      color = s => c.inverse(c.red(s))
+      color = s => c.inverse.red(s)
     }
 
     const paddedType = commit.type.padStart(typeLength + 1, ' ')
     const paddedScope = !commit.scope
       ? ' '.repeat(scopeLength ? scopeLength + 2 : 0)
-      : c.dim('(') + commit.scope + c.dim(')') + ' '.repeat(scopeLength - commit.scope.length)
+      : c.dim`(` + commit.scope + c.dim`)` + ' '.repeat(scopeLength - commit.scope.length)
 
     return [
       c.dim(commit.shortHash),
@@ -59,7 +59,7 @@ export function formatParsedCommits(commits: GitCommit[]) {
 export function printRecentCommits(commits: GitCommit[]): void {
   if (!commits.length) {
     console.log()
-    console.log(c.blue(`i`) + c.gray(` No commits since the last version`))
+    console.log(c.blue`i` + c.gray` No commits since the last version`)
     console.log()
     return
   }
@@ -67,11 +67,7 @@ export function printRecentCommits(commits: GitCommit[]): void {
   const prettified = formatParsedCommits(commits)
 
   console.log()
-  console.log(
-    c.bold(
-      `${c.green(commits.length)} Commits since the last version:`,
-    ),
-  )
+  console.log(c.bold`${c.green(commits.length)} Commits since the last version:`)
   console.log()
   console.log(prettified.join('\n'))
   console.log()

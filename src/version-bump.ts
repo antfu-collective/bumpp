@@ -2,7 +2,7 @@ import type { VersionBumpOptions } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
 import { tokenizeArgs } from 'args-tokenizer'
-import c from 'picocolors'
+import c from 'ansis'
 import prompts from 'prompts'
 import { getRecentCommits } from 'tiny-conventional-commits-parser'
 import { x } from 'tinyexec'
@@ -146,12 +146,12 @@ function printSummary(operation: Operation) {
   if (operation.options.execute)
     console.log(` execute ${c.bold(typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
   if (operation.options.push)
-    console.log(`    push ${c.cyan(c.bold('yes'))}`)
+    console.log(`    push ${c.cyan.bold('yes')}`)
   if (operation.options.install)
-    console.log(` install ${c.cyan(c.bold('yes'))}`)
+    console.log(` install ${c.cyan.bold('yes')}`)
   console.log()
   console.log(`    from ${c.bold(operation.state.currentVersion)}`)
-  console.log(`      to ${c.green(c.bold(operation.state.newVersion))}`)
+  console.log(`      to ${c.green.bold(operation.state.newVersion)}`)
   console.log()
 }
 

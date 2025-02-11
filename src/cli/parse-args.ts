@@ -1,7 +1,7 @@
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import process from 'node:process'
+import c from 'ansis'
 import cac from 'cac'
-import c from 'picocolors'
 import { valid as isValidVersion } from 'semver'
 import { version } from '../../package.json'
 import { bumpConfigDefaults, loadBumpConfig } from '../config'
