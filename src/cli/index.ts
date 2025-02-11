@@ -1,6 +1,6 @@
 import type { VersionBumpProgress } from '../types/version-bump-progress'
 import process from 'node:process'
-import { x } from 'tinyexec'
+import { NonZeroExitError, x } from 'tinyexec'
 import { ProgressEvent } from '../types/version-bump-progress'
 import { versionBump } from '../version-bump'
 import { ExitCode } from './exit-code'
@@ -74,11 +74,14 @@ function progress({ event, script, updatedFiles, skippedFiles, newVersion }: Ver
   }
 }
 
-function errorHandler(error: Error): void {
+function errorHandler(error: Error | NonZeroExitError): void {
   let message = error.message || String(error)
 
+  if (error instanceof NonZeroExitError)
+    message += `\n\n${error.output?.stderr || ''}`
+
   if (process.env.DEBUG || process.env.NODE_ENV === 'development')
-    message = error.stack || message
+    message += `\n\n${error.stack || ''}`
 
   console.error(message)
   process.exit(ExitCode.FatalError)
