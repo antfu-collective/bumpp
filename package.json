@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "args-tokenizer": "^0.3.0",
-    "c12": "^2.0.1",
+    "c12": "^3.0.2",
     "cac": "^6.7.14",
     "escalade": "^3.2.0",
     "js-yaml": "^4.1.0",
