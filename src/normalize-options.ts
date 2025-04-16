@@ -126,9 +126,9 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       // read pnpm-workspace.yaml
       const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8')
       // parse yaml
-      const workspaces = yaml.parse(pnpmWorkspace) as { packages: string[] }
+      const workspaces = yaml.parse(pnpmWorkspace) as { packages?: string[] }
       // append package.json to each workspace string
-      const workspacesWithPackageJson = workspaces.packages.map(workspace => `${workspace}/package.json`)
+      const workspacesWithPackageJson = (workspaces.packages ?? []).map(workspace => `${workspace}/package.json`)
       // start with ! or already in files should be excluded
       const withoutExcludedWorkspaces = workspacesWithPackageJson.filter(workspace => !workspace.startsWith('!') && !raw.files?.includes(workspace))
       // add to files
