@@ -121,19 +121,26 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       'deno.jsonc',
     ]
 
+    /** package.json defined in workspace */
+    const workspaces: string[] = []
+
     // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
     if (fsSync.existsSync('pnpm-workspace.yaml')) {
       // read pnpm-workspace.yaml
-      const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8')
-      // parse yaml
-      const workspaces = yaml.parse(pnpmWorkspace) as { packages?: string[] }
-      // append package.json to each workspace string
-      const workspacesWithPackageJson = (workspaces.packages ?? []).map(workspace => `${workspace}/package.json`)
-      // start with ! or already in files should be excluded
-      const withoutExcludedWorkspaces = workspacesWithPackageJson.filter(workspace => !workspace.startsWith('!') && !raw.files?.includes(workspace))
-      // add to files
-      raw.files = raw.files.concat(withoutExcludedWorkspaces)
+      const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8').then(yaml.parse) as { packages?: string[] }
+      workspaces.push(...(pnpmWorkspace.packages ?? []))
     }
+    // check npm/bun workspace config
+    if (fsSync.existsSync('package.json')) {
+      const packageJson = await fs.readFile('package.json', 'utf8').then(JSON.parse) as { workspaces?: string[] }
+      workspaces.push(...(packageJson.workspaces ?? []))
+    }
+    // append package.json to each workspace string
+    const workspacesWithPackageJson = workspaces.map(workspace => `${workspace}/package.json`)
+    // start with ! or already in files should be excluded
+    const withoutExcludedWorkspaces = workspacesWithPackageJson.filter(workspace => !workspace.startsWith('!') && !raw.files?.includes(workspace))
+    // add to files
+    raw.files = raw.files.concat(withoutExcludedWorkspaces)
   }
   else {
     raw.files = raw.files?.length
