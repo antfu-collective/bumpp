@@ -2,7 +2,7 @@ import type { Operation } from './operation'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
 import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
-import { isManifest, isPackageLockManifest } from './manifest'
+import { isBunLockManifest, isManifest, isPackageLockManifest } from './manifest'
 import { ProgressEvent } from './types/version-bump-progress'
 
 /**
@@ -46,6 +46,7 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
   switch (name) {
     case 'package.json':
     case 'package-lock.json':
+    case 'bun.lock':
     case 'bower.json':
     case 'component.json':
     case 'jsr.json':
@@ -68,7 +69,7 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
  * @returns - `true` if the file was actually modified
  */
 async function updateManifestFile(relPath: string, operation: Operation): Promise<boolean> {
-  const { cwd } = operation.options
+  const { cwd, files } = operation.options
   const { newVersion } = operation.state
   let modified = false
 
@@ -77,13 +78,35 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
   if (!isManifest(file.data)) {
     return modified
   }
+
+  const workspaceDirs = files
+    .filter(v => v.endsWith('package.json'))
+    .map(v => path.dirname(v))
+
+  // For bun.lock, update workspace package versions
+  if (file.path.endsWith('bun.lock') && isBunLockManifest(file.data)) {
+    for (const pkgPath of workspaceDirs) {
+      if (file.data.workspaces[pkgPath]?.version && file.data.workspaces[pkgPath].version !== newVersion) {
+        file.modified.push([['workspaces', pkgPath, 'version'], newVersion])
+        modified = true
+      }
+    }
+  }
+
   if (file.data.version == null) {
     return modified
   }
   if (file.data.version !== newVersion) {
     file.modified.push([['version'], newVersion])
-    if (isPackageLockManifest(file.data))
+    if (isPackageLockManifest(file.data)) {
       file.modified.push([['packages', '', 'version'], newVersion])
+      // For workspace projects, update the specified file's version in lock file
+      for (const pkgPath of workspaceDirs) {
+        if (file.data.packages[pkgPath]?.version && file.data.packages[pkgPath].version !== newVersion) {
+          file.modified.push([['packages', pkgPath, 'version'], newVersion])
+        }
+      }
+    }
 
     await writeJsoncFile(file)
     modified = true

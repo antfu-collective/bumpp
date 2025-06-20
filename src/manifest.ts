@@ -1,3 +1,5 @@
+import type { BunLockFile } from 'bun'
+
 /**
  * The npm package manifest (package.json)
  */
@@ -16,6 +18,9 @@ export interface PackageLockManifest extends Manifest {
     '': {
       version: string
     }
+    [key: string]: {
+      version: string
+    } | undefined
   }
 }
 
@@ -37,6 +42,13 @@ export function isPackageLockManifest(
   manifest: Manifest,
 ): manifest is PackageLockManifest {
   return (typeof (manifest as PackageLockManifest).packages?.['']?.version === 'string')
+}
+
+/**
+ * Determines whether the specified manifest is bun.lock
+ */
+export function isBunLockManifest(manifest: Partial<Manifest>): manifest is BunLockFile {
+  return (typeof ((manifest as BunLockFile).workspaces[''].name) === 'string')
 }
 
 /**

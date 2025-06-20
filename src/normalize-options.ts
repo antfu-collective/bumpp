@@ -114,6 +114,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     raw.files = [
       'package.json',
       'package-lock.json',
+      'bun.lock',
       'packages/**/package.json',
       'jsr.json',
       'jsr.jsonc',
