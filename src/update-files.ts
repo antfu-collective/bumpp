@@ -9,21 +9,22 @@ import { ProgressEvent } from './types/version-bump-progress'
  * Updates the version number in the specified files.
  */
 export async function updateFiles(operation: Operation): Promise<Operation> {
-  const { files } = operation.options
+  const { files, cwd } = operation.options
 
   for (const relPath of files) {
     const modified = await updateFile(relPath, operation)
+    const absPath = path.resolve(cwd, relPath)
 
     if (modified) {
       operation.update({
         event: ProgressEvent.FileUpdated,
-        updatedFiles: operation.state.updatedFiles.concat(relPath),
+        updatedFiles: operation.state.updatedFiles.concat(absPath),
       })
     }
     else {
       operation.update({
         event: ProgressEvent.FileSkipped,
-        skippedFiles: operation.state.skippedFiles.concat(relPath),
+        skippedFiles: operation.state.skippedFiles.concat(absPath),
       })
     }
   }
