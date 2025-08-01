@@ -132,8 +132,16 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     }
     // check npm/bun workspace config
     if (fsSync.existsSync('package.json')) {
-      const packageJson = await fs.readFile('package.json', 'utf8').then(JSON.parse) as { workspaces?: string[] }
-      workspaces.push(...(packageJson.workspaces ?? []))
+      type PKGWorkspaces = string[] | { packages?: string[] }
+      const packageJson = await fs.readFile('package.json', 'utf8').then(JSON.parse) as { workspaces?: PKGWorkspaces }
+      const _workspaces
+        = Array.isArray(packageJson.workspaces)
+          ? packageJson.workspaces
+          : packageJson.workspaces && Array.isArray(packageJson.workspaces.packages)
+            ? packageJson.workspaces.packages
+            : []
+
+      workspaces.push(..._workspaces)
     }
     // append package.json to each workspace string
     const workspacesWithPackageJson = workspaces.map(workspace => `${workspace}/package.json`)
