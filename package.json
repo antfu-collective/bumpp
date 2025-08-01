@@ -2,7 +2,7 @@
   "name": "bumpp",
   "type": "module",
   "version": "10.2.1",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.14.0",
   "description": "Bump version, commit changes, tag, and push to Git",
   "authors": [
     {
@@ -65,7 +65,7 @@
   "dependencies": {
     "ansis": "^4.1.0",
     "args-tokenizer": "^0.3.0",
-    "c12": "^3.1.0",
+    "c12": "^3.2.0",
     "cac": "^6.7.14",
     "escalade": "^3.2.0",
     "jsonc-parser": "^3.3.1",
@@ -85,7 +85,7 @@
     "rimraf": "^6.0.1",
     "tiny-conventional-commits-parser": "^0.0.1",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "unbuild": "^3.6.0",
     "vitest": "^3.2.4"
   }
