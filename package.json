@@ -73,14 +73,14 @@
     "semver": "^7.7.2",
     "tinyexec": "^1.0.1",
     "tinyglobby": "^0.2.14",
-    "yaml": "^2.8.0"
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.0.0",
-    "@types/node": "^24.1.0",
+    "@antfu/eslint-config": "^5.2.1",
+    "@types/node": "^24.2.1",
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.7.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "prompts": "^2.4.2",
     "rimraf": "^6.0.1",
     "tiny-conventional-commits-parser": "^0.0.1",
