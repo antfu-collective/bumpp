@@ -77,7 +77,7 @@ export function loadCliArgs(argv = process.argv) {
     .version(version)
     .usage('[...files]')
     .option('--preid <preid>', 'ID for prerelease')
-    .option('--all', `Include all files (default: ${bumpConfigDefaults.all})`)
+    .option('-a, --all', `Include all files (default: ${bumpConfigDefaults.all})`)
     .option('--no-git-check', `Skip git check`, { default: bumpConfigDefaults.noGitCheck })
     .option('-c, --commit [msg]', 'Commit message', { default: true })
     .option('--no-commit', 'Skip commit', { default: false })
