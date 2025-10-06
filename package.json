@@ -59,7 +59,7 @@
     "test": "vitest",
     "bumpp": "tsx src/cli/run.ts",
     "prepublishOnly": "pnpm run build",
-    "release": "pnpm run bumpp && pnpm publish",
+    "release": "pnpm run bumpp",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
