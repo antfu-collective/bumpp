@@ -46,6 +46,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         execute: args.execute,
         printCommits: args.printCommits,
         recursive: args.recursive,
+        release: args.release,
       }),
     }
 
@@ -94,6 +95,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--current-version <version>', 'Current version')
     .option('--print-commits', 'Print recent commits')
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
+    .option('--release <release>', `Release type or version number (e.g. 'major', 'minor', 'patch', 'prerelease', etc. default: ${bumpConfigDefaults.release})`)
     .help()
 
   const result = cli.parse(argv)
