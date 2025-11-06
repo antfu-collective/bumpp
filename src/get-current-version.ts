@@ -1,5 +1,6 @@
 import type { Operation } from './operation'
 import { valid as isValidVersion } from 'semver'
+import { readCargoTomlVersion } from './cargo-toml'
 import { readJsoncFile } from './fs'
 import { isManifest } from './manifest'
 
@@ -12,6 +13,14 @@ export async function getCurrentVersion(operation: Operation): Promise<Operation
     return operation
 
   const { cwd, files } = operation.options
+
+  // Check Cargo.toml files
+  const cargoFiles = files.filter(file => file.includes('Cargo.toml'))
+  if (cargoFiles.length > 0) {
+    const state = await readCargoTomlVersion(cargoFiles)
+    if (state)
+      return operation.update(state)
+  }
 
   // Check all JSON files in the files list
   const filesToCheck = files.filter(file => file.endsWith('.json'))

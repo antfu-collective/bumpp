@@ -6,6 +6,7 @@ import fs from 'node:fs/promises'
 import process from 'node:process'
 import { glob } from 'tinyglobby'
 import yaml from 'yaml'
+import { readCargoToml } from './cargo-toml'
 import { isReleaseType } from './release-type'
 
 interface Interface {
@@ -119,10 +120,18 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       'jsr.jsonc',
       'deno.json',
       'deno.jsonc',
+      'Cargo.toml',
+      'crates/**/Cargo.toml',
     ]
 
     /** package.json defined in workspace */
     const workspaces: string[] = []
+
+    // check if Cargo.toml exists
+    if (fsSync.existsSync('Cargo.toml')) {
+      const cargoToml = await readCargoToml()
+      workspaces.push(...(cargoToml.workspace?.members ?? []))
+    }
 
     // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
     if (fsSync.existsSync('pnpm-workspace.yaml')) {
@@ -130,6 +139,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
       const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8').then(yaml.parse) as { packages?: string[] }
       workspaces.push(...(pnpmWorkspace.packages ?? []))
     }
+
     // check npm/bun workspace config
     if (fsSync.existsSync('package.json')) {
       type PKGWorkspaces = string[] | { packages?: string[] }
@@ -143,6 +153,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
 
       workspaces.push(..._workspaces)
     }
+
     // append package.json to each workspace string
     const workspacesWithPackageJson = workspaces.map(workspace => `${workspace}/package.json`)
     // start with ! or already in files should be excluded
@@ -153,7 +164,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   else {
     raw.files = raw.files?.length
       ? raw.files
-      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc', 'deno.json', 'deno.jsonc']
+      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc', 'deno.json', 'deno.jsonc', 'Cargo.toml']
   }
 
   const files = await glob(

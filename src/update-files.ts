@@ -1,6 +1,7 @@
 import type { Operation } from './operation'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
+import { updateCargoTomlFile } from './cargo-toml'
 import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
 import { isManifest, isPackageLockManifest } from './manifest'
 import { ProgressEvent } from './types/version-bump-progress'
@@ -54,7 +55,8 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
     case 'deno.json':
     case 'deno.jsonc':
       return updateManifestFile(relPath, operation)
-
+    case 'Cargo.toml':
+      return updateCargoTomlFile(relPath, operation)
     default:
       return updateTextFile(relPath, operation)
   }
