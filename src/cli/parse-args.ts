@@ -44,6 +44,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         ignoreScripts: args.ignoreScripts,
         currentVersion: args.currentVersion,
         execute: args.execute,
+        commitsPathFilter: args.commitsPathFilter,
         printCommits: args.printCommits,
         recursive: args.recursive,
         release: args.release,
@@ -95,6 +96,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--current-version <version>', 'Current version')
     .option('--print-commits', 'Print recent commits')
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
+    .option('--commits-path-filter [path]', 'Path filter for commits list for latest version and conventional version (if passed with no path, the CWD will be used)')
     .option('--release <release>', `Release type or version number (e.g. 'major', 'minor', 'patch', 'prerelease', etc. default: ${bumpConfigDefaults.release})`)
     .help()
 

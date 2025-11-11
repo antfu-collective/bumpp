@@ -1,6 +1,7 @@
 import type { Operation } from './operation'
 import { x } from 'tinyexec'
 import { ProgressEvent } from './types/version-bump-progress'
+import { getRecentCommits, GitCommit } from 'tiny-conventional-commits-parser'
 
 /**
  * Commits the modififed files to Git, if the `commit` option is enabled.
@@ -44,7 +45,7 @@ export async function gitCommit(operation: Operation): Promise<Operation> {
  * Tags the Git commit, if the `tag` option is enabled.
  */
 export async function gitTag(operation: Operation): Promise<Operation> {
-  if (!operation.options.tag)
+  if (!operation.options.tag || operation.options.tag?.commit === false)
     return operation
 
   const { commit, tag } = operation.options
@@ -103,4 +104,23 @@ export function formatVersionString(template: string, newVersion: string): strin
 
   else
     return template + newVersion
+}
+
+/**
+ * Gets the recent commits from the Git repository.
+ * Will try to find the last matching tag and then get the recent commits since then.
+ * (tiny-conventional-commits-parser will fall back to commits since the last tag of any kind,
+ * so narrowing it down based on the info we get from the user.)
+ */
+export async function getLatestCommits(operation: Operation): Promise<GitCommit[]> {
+  const tagTemplate = operation.options.tag?.name ? formatVersionString(operation.options.tag.name, '*') : 'v*'
+  // This is what tiny-conventional-commits-parser would run anyway if we didn't provide a tag (minus the tag filter)
+  const tag = (await x('git', ['describe', '--tags', '--abbrev=0', '--match', tagTemplate], { throwOnError: false }))
+    .stdout.split('\n').at(0)
+  if (tag) {
+    return getRecentCommits(tag, undefined, operation.options.commitsPathFilter)
+  }
+  const root = (await x('git', ['rev-list', '--max-parents=0', 'HEAD'], { throwOnError: false }))
+    .stdout.trim()
+  return getRecentCommits(root, undefined, operation.options.commitsPathFilter)
 }
