@@ -32,6 +32,9 @@ importers:
       semver:
         specifier: ^7.7.2
         version: 7.7.2
+      tiny-conventional-commits-parser:
+        specifier: ^0.1.0
+        version: 0.1.0
       tinyexec:
         specifier: ^1.0.1
         version: 1.0.1
@@ -63,9 +66,6 @@ importers:
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
-      tiny-conventional-commits-parser:
-        specifier: ^0.0.1
-        version: 0.0.1
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
@@ -2730,8 +2730,8 @@ packages:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
 
-  tiny-conventional-commits-parser@0.0.1:
-    resolution: {integrity: sha512-N5+AZWdBeHNSgTIaxvx0+9mFrnW4H1BbjQ84H7i3TuWSkno8Hju886hLaHZhE/hYEKrfrfl/uHurqpZJHDuYGQ==}
+  tiny-conventional-commits-parser@0.1.0:
+    resolution: {integrity: sha512-pLbcSKDnlETspEOKJvVfr8Jymb3exA8UeeRkACn7axlfbqmBr6BT0T3jI7hwPr3gVbrOQQ7DjaPhN5A86+E6Nw==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -5645,7 +5645,7 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  tiny-conventional-commits-parser@0.0.1: {}
+  tiny-conventional-commits-parser@0.1.0: {}
 
   tinybench@2.9.0: {}
 

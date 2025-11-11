@@ -158,6 +158,12 @@ export interface VersionBumpOptions {
   printCommits?: boolean
 
   /**
+   * A path filter to apply to the commits analyzed to find the latest version and conventional commits.
+   * If `true`, the CWD will be used.
+   */
+  commitsPathFilter?: string | true
+
+  /**
    * Custom function to provide the version number
    */
   customVersion?: (currentVersion: string, semver: typeof _semver) => Promise<string | void> | string | void

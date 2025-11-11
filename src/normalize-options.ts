@@ -55,6 +55,7 @@ export interface NormalizedOptions {
   }
   tag?: {
     name: string
+    commit?: boolean
   }
   sign?: boolean
   push: boolean
@@ -65,6 +66,7 @@ export interface NormalizedOptions {
   ignoreScripts: boolean
   execute?: string | ((config: Operation) => void | PromiseLike<void>)
   printCommits?: boolean
+  commitsPathFilter?: string
   customVersion?: VersionBumpOptions['customVersion']
   currentVersion?: string
 }
@@ -84,6 +86,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   const ignoreScripts = Boolean(raw.ignoreScripts)
   const execute = raw.execute
   const recursive = Boolean(raw.recursive)
+  const commitsPathFilter = raw.commitsPathFilter === true ? cwd : raw.commitsPathFilter
 
   let release: Release
   if (!raw.release || raw.release === 'prompt')
@@ -98,7 +101,12 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   let tag
   if (typeof raw.tag === 'string')
     tag = { name: raw.tag }
-
+  // --no-tag and --tag [tag] can be used together to disable actual tagging but still provide a template for the tag name
+  else if (Array.isArray(raw.tag) && raw.tag.length > 0) {
+    const name = raw.tag.find(i => typeof i === 'string') ?? 'v'
+    const commit = raw.tag.find(i => typeof i === 'boolean')
+    tag = { name, commit }
+  }
   else if (raw.tag)
     tag = { name: 'v' }
 
@@ -203,6 +211,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     ignoreScripts,
     execute,
     printCommits: raw.printCommits ?? true,
+    commitsPathFilter,
     customVersion: raw.customVersion,
     currentVersion: raw.currentVersion,
   }
