@@ -116,7 +116,6 @@ export function loadCliArgs(argv = process.argv) {
 
   const { tag, commit, yes, ...rest } = args
 
-  console.log(args)
   return {
     args: {
       ...rest,
