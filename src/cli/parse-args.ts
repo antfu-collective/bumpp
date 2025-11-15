@@ -37,8 +37,8 @@ export async function parseArgs(): Promise<ParsedArgs> {
         push: args.push,
         all: args.all,
         noGitCheck: args.noGitCheck,
-        confirm: !args.yes,
-        noVerify: !args.verify,
+        confirm: args.yes === undefined ? undefined : !args.yes,
+        noVerify: args.verify === undefined ? undefined : !args.verify,
         install: args.install,
         files: [...(args['--'] || []), ...resultArgs],
         ignoreScripts: args.ignoreScripts,
@@ -102,18 +102,26 @@ export function loadCliArgs(argv = process.argv) {
   const rawArgs = cli.rawArgs
   const args = result.options
 
+  // TODO: To simplify the checks there, should we move the default value declaration to config.ts/bumpConfigDefaults?
   const COMMIT_REG = /(?:-c|--commit|--no-commit)(?:=.*|$)/
   const TAG_REG = /(?:-t|--tag|--no-tag)(?:=.*|$)/
+  const YES_REG = /(?:-y|--yes)(?:=.*|$)/
+  // const NO_VERIFY_REG = /--no-verify(?:=.*|$)/
   const hasCommitFlag = rawArgs.some(arg => COMMIT_REG.test(arg))
   const hasTagFlag = rawArgs.some(arg => TAG_REG.test(arg))
+  const hasYesFlag = rawArgs.some(arg => YES_REG.test(arg))
+  // const hasNoVerifyFlag = rawArgs.some(arg => NO_VERIFY_REG.test(arg))
 
-  const { tag, commit, ...rest } = args
+  const { tag, commit, yes, ...rest } = args
 
+  console.log(args)
   return {
     args: {
       ...rest,
       commit: hasCommitFlag ? commit : undefined,
       tag: hasTagFlag ? tag : undefined,
+      yes: hasYesFlag ? yes : undefined,
+      // verify: hasNoVerifyFlag ? !no
     } as { [k: string]: any },
     resultArgs: result.args,
   }
