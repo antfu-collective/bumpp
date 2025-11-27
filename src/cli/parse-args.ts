@@ -123,7 +123,7 @@ export function loadCliArgs(argv = process.argv) {
       tag: hasTagFlag ? tag : undefined,
       yes: hasYesFlag ? yes : undefined,
       verify: hasNoVerifyFlag ? !args.verify : undefined,
-      install: hasInstallFlag ? !args.install : undefined
+      install: hasInstallFlag ? !args.install : undefined,
     } as { [k: string]: any },
     resultArgs: result.args,
   }
