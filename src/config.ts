@@ -33,6 +33,7 @@ export async function loadBumpConfig(
     },
     cwd: configFile ? dirname(configFile) : cwd,
   })
+
   return config!
 }
 
