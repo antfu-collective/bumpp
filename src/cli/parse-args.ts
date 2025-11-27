@@ -79,7 +79,7 @@ export function loadCliArgs(argv = process.argv) {
     .usage('[...files]')
     .option('--preid <preid>', 'ID for prerelease')
     .option('-a, --all', `Include all files (default: ${bumpConfigDefaults.all})`)
-    .option('--git-check', `Run git check`, { default: !bumpConfigDefaults.noGitCheck })
+    .option('--git-check', `Run git check (default: ${!bumpConfigDefaults.noGitCheck})`)
     .option('-c, --commit [msg]', `Commit message (default: ${bumpConfigDefaults.commit})`)
     .option('-t, --tag [tag]', `Tag name (default: ${bumpConfigDefaults.tag})`)
     .option('--sign', 'Sign commit and tag')
