@@ -36,7 +36,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         sign: args.sign,
         push: args.push,
         all: args.all,
-        noGitCheck: args.noGitCheck,
+        noGitCheck: args.gitCheck === undefined ? undefined : !args.gitCheck,
         confirm: args.yes === undefined ? undefined : !args.yes,
         noVerify: args.verify === undefined ? undefined : !args.verify,
         install: args.install,
@@ -79,17 +79,15 @@ export function loadCliArgs(argv = process.argv) {
     .usage('[...files]')
     .option('--preid <preid>', 'ID for prerelease')
     .option('-a, --all', `Include all files (default: ${bumpConfigDefaults.all})`)
-    .option('--no-git-check', `Skip git check`, { default: bumpConfigDefaults.noGitCheck })
-    .option('-c, --commit [msg]', 'Commit message', { default: true })
-    .option('--no-commit', 'Skip commit', { default: false })
-    .option('-t, --tag [tag]', 'Tag name', { default: true })
-    .option('--no-tag', 'Skip tag', { default: false })
+    .option('--git-check', `Run git check (default: ${!bumpConfigDefaults.noGitCheck})`)
+    .option('-c, --commit [msg]', `Commit message (default: ${bumpConfigDefaults.commit})`)
+    .option('-t, --tag [tag]', `Tag name (default: ${bumpConfigDefaults.tag})`)
     .option('--sign', 'Sign commit and tag')
-    .option('--install', `Run 'npm install' after bumping version (default: ${bumpConfigDefaults.install})`, { default: false })
+    .option('--install', `Run 'npm install' after bumping version (default: ${bumpConfigDefaults.install})`)
     .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
     .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
     .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
-    .option('--no-verify', 'Skip git verification')
+    .option('--verify', `Run git verification (default: ${!bumpConfigDefaults.noVerify})`)
     .option('--ignore-scripts', `Ignore scripts (default: ${bumpConfigDefaults.ignoreScripts})`)
     .option('-q, --quiet', 'Quiet mode')
     .option('--current-version <version>', 'Current version')
@@ -99,32 +97,10 @@ export function loadCliArgs(argv = process.argv) {
     .help()
 
   const result = cli.parse(argv)
-  const rawArgs = cli.rawArgs
   const args = result.options
 
-  // TODO: To simplify the checks here, should we move the default value declaration to config.ts/bumpConfigDefaults?
-  const COMMIT_REG = /(?:-c|--commit|--no-commit)(?:=.*|$)/
-  const TAG_REG = /(?:-t|--tag|--no-tag)(?:=.*|$)/
-  const YES_REG = /(?:-y|--yes)(?:=.*|$)/
-  const NO_VERIFY_REG = /--no-verify(?:=.*|$)/
-  const INSTALL_ARG = /--install(?:=.*|$)/
-  const hasCommitFlag = rawArgs.some(arg => COMMIT_REG.test(arg))
-  const hasTagFlag = rawArgs.some(arg => TAG_REG.test(arg))
-  const hasYesFlag = rawArgs.some(arg => YES_REG.test(arg))
-  const hasNoVerifyFlag = rawArgs.some(arg => NO_VERIFY_REG.test(arg))
-  const hasInstallFlag = rawArgs.some(arg => INSTALL_ARG.test(arg))
-
-  const { tag, commit, yes, ...rest } = args
-
   return {
-    args: {
-      ...rest,
-      commit: hasCommitFlag ? commit : undefined,
-      tag: hasTagFlag ? tag : undefined,
-      yes: hasYesFlag ? yes : undefined,
-      verify: hasNoVerifyFlag ? !args.verify : undefined,
-      install: hasInstallFlag ? !args.install : undefined,
-    } as { [k: string]: any },
+    args,
     resultArgs: result.args,
   }
 }
