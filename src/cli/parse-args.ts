@@ -47,6 +47,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         printCommits: args.printCommits,
         recursive: args.recursive,
         release: args.release,
+        publishTag: args.publishTag,
       }),
     }
 
@@ -94,6 +95,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('-q, --quiet', 'Quiet mode')
     .option('--current-version <version>', 'Current version')
     .option('--print-commits', 'Print recent commits')
+    .option('--npm-tag [tag]', 'Npm publish tag', { default: undefined })
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
     .option('--release <release>', `Release type or version number (e.g. 'major', 'minor', 'patch', 'prerelease', etc. default: ${bumpConfigDefaults.release})`)
     .help()
@@ -105,22 +107,25 @@ export function loadCliArgs(argv = process.argv) {
   // TODO: To simplify the checks here, should we move the default value declaration to config.ts/bumpConfigDefaults?
   const COMMIT_REG = /(?:-c|--commit|--no-commit)(?:=.*|$)/
   const TAG_REG = /(?:-t|--tag|--no-tag)(?:=.*|$)/
+  const NPM_TAG_REG = /--npm-tag(?:=.*|$)/
   const YES_REG = /(?:-y|--yes)(?:=.*|$)/
   const NO_VERIFY_REG = /--no-verify(?:=.*|$)/
   const INSTALL_ARG = /--install(?:=.*|$)/
   const hasCommitFlag = rawArgs.some(arg => COMMIT_REG.test(arg))
   const hasTagFlag = rawArgs.some(arg => TAG_REG.test(arg))
+  const hasNpmTagFlag = rawArgs.some(arg => NPM_TAG_REG.test(arg))
   const hasYesFlag = rawArgs.some(arg => YES_REG.test(arg))
   const hasNoVerifyFlag = rawArgs.some(arg => NO_VERIFY_REG.test(arg))
   const hasInstallFlag = rawArgs.some(arg => INSTALL_ARG.test(arg))
 
-  const { tag, commit, yes, ...rest } = args
+  const { tag, commit, yes, npmTag, ...rest } = args
 
   return {
     args: {
       ...rest,
       commit: hasCommitFlag ? commit : undefined,
       tag: hasTagFlag ? tag : undefined,
+      publishTag: hasNpmTagFlag ? (npmTag || true) : undefined,
       yes: hasYesFlag ? yes : undefined,
       verify: hasNoVerifyFlag ? !args.verify : undefined,
       install: hasInstallFlag ? !args.install : undefined,

@@ -10,7 +10,7 @@ import { updateFiles } from '../src/update-files'
 describe('resolvePublishTag', () => {
   it('should infer "beta" tag from prerelease version', async () => {
     prompts.inject(['beta'])
-    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd() })
+    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), publishTag: true })
     Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
 
     await resolvePublishTag(operation)
@@ -19,7 +19,7 @@ describe('resolvePublishTag', () => {
 
   it('should infer "latest" tag from release version', async () => {
     prompts.inject(['latest'])
-    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd() })
+    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), publishTag: true })
     Object.assign(operation.state, { newVersion: '1.0.0' })
 
     await resolvePublishTag(operation)
@@ -28,8 +28,24 @@ describe('resolvePublishTag', () => {
 
   it('should allow user to override tag', async () => {
     prompts.inject(['next'])
+    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), publishTag: true })
+    Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
+
+    await resolvePublishTag(operation)
+    expect(operation.state.publishTag).toBe('next')
+  })
+
+  it('should do nothing if publishTag is undefined', async () => {
     const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd() })
     Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
+
+    await resolvePublishTag(operation)
+    expect(operation.state.publishTag).toBeUndefined()
+  })
+
+  it('should use provided tag string without prompting', async () => {
+    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), publishTag: 'next' })
+    Object.assign(operation.state, { newVersion: '1.0.0' })
 
     await resolvePublishTag(operation)
     expect(operation.state.publishTag).toBe('next')
