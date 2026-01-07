@@ -1,4 +1,5 @@
 import type { Operation } from './operation'
+import type { PublishConfig } from './publish-config-tag'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
 import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
@@ -86,8 +87,32 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
     if (isPackageLockManifest(file.data))
       file.modified.push([['packages', '', 'version'], newVersion])
 
-    await writeJsoncFile(file)
     modified = true
+  }
+
+  if (operation.state.publishTag) {
+    const currentTag = (file.data.publishConfig as PublishConfig)?.tag
+    const newTag = operation.state.publishTag
+
+    if (newTag === 'latest') {
+      if (currentTag) {
+        if (Object.keys((file.data as any).publishConfig).length === 1) {
+          file.modified.push([['publishConfig'], undefined])
+        }
+        else {
+          file.modified.push([['publishConfig', 'tag'], undefined])
+        }
+        modified = true
+      }
+    }
+    else if (newTag !== currentTag) {
+      file.modified.push([['publishConfig', 'tag'], newTag])
+      modified = true
+    }
+  }
+
+  if (modified) {
+    await writeJsoncFile(file)
   }
 
   return modified

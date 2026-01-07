@@ -94,6 +94,14 @@ export interface VersionBumpOptions {
   confirm?: boolean
 
   /**
+   * Indicates whether to update the publish tag in package.json.
+   * Can be set to a custom tag string or `true` to prompt user.
+   *
+   * Defaults to `undefined` (no action).
+   */
+  publishTag?: boolean | string
+
+  /**
    * Indicates whether to bypass git commit hooks (`git commit --no-verify`).
    *
    * Defaults to `false`.

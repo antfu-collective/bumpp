@@ -12,6 +12,7 @@ import { getNewVersion } from './get-new-version'
 import { formatVersionString, gitCommit, gitPush, gitTag } from './git'
 import { Operation } from './operation'
 import { printRecentCommits } from './print-commits'
+import { resolvePublishTag } from './publish-config-tag'
 import { runNpmScript } from './run-npm-script'
 import { NpmScript } from './types/version-bump-progress'
 import { updateFiles } from './update-files'
@@ -59,6 +60,8 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
   // Get the old and new version numbers
   await getCurrentVersion(operation)
   await getNewVersion(operation, commits)
+
+  await resolvePublishTag(operation)
 
   if (arg.confirm) {
     printSummary(operation)
@@ -139,6 +142,8 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
 function printSummary(operation: Operation) {
   console.log()
   console.log(`   files ${operation.options.files.map(i => c.bold(i)).join('\n         ')}`)
+  if (operation.state.publishTag)
+    console.log(` npm tag ${c.cyan.bold(operation.state.publishTag)}`)
   if (operation.options.commit)
     console.log(`  commit ${c.bold(formatVersionString(operation.options.commit.message, operation.state.newVersion))}`)
   if (operation.options.tag)

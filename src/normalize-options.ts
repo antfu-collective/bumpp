@@ -56,6 +56,7 @@ export interface NormalizedOptions {
   tag?: {
     name: string
   }
+  publishTag?: string | boolean
   sign?: boolean
   push: boolean
   files: string[]
@@ -101,6 +102,8 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
 
   else if (raw.tag)
     tag = { name: 'v' }
+
+  const publishTag = raw.publishTag
 
   // NOTE: This must come AFTER `tag` and `push`, because it relies on them
   let commit
@@ -203,6 +206,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     ignoreScripts,
     execute,
     printCommits: raw.printCommits ?? true,
+    publishTag,
     customVersion: raw.customVersion,
     currentVersion: raw.currentVersion,
   }
