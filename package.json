@@ -2,7 +2,7 @@
   "name": "bumpp",
   "type": "module",
   "version": "10.3.2",
-  "packageManager": "pnpm@10.23.0",
+  "packageManager": "pnpm@10.28.0",
   "description": "Bump version, commit changes, tag, and push to Git",
   "authors": [
     {
@@ -65,28 +65,28 @@
   "dependencies": {
     "ansis": "^4.2.0",
     "args-tokenizer": "^0.3.0",
-    "c12": "^3.3.2",
+    "c12": "^3.3.3",
     "cac": "^6.7.14",
     "escalade": "^3.2.0",
     "jsonc-parser": "^3.3.1",
-    "package-manager-detector": "^1.5.0",
+    "package-manager-detector": "^1.6.0",
     "semver": "^7.7.3",
     "tinyexec": "^1.0.2",
     "tinyglobby": "^0.2.15",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.2.0",
-    "@types/node": "^24.10.1",
+    "@antfu/eslint-config": "^6.7.3",
+    "@types/node": "^25.0.7",
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.7.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "prompts": "^2.4.2",
     "rimraf": "^6.1.2",
     "tiny-conventional-commits-parser": "^0.1.0",
-    "tsx": "^4.20.6",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "unbuild": "^3.6.1",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.17"
   }
 }
