@@ -28,7 +28,7 @@ const messageColorMap: Record<string, (c: string) => string> = {
   breaking: c.red,
 }
 
-export function formatParsedCommits(commits: GitCommit[]) {
+export function formatParsedCommits(commits: readonly GitCommit[]) {
   const typeLength = commits.map(({ type }) => type.length).reduce((a, b) => Math.max(a, b), 0)
   const scopeLength = commits.map(({ scope }) => scope.length).reduce((a, b) => Math.max(a, b), 0)
 
@@ -56,7 +56,7 @@ export function formatParsedCommits(commits: GitCommit[]) {
   })
 }
 
-export function printRecentCommits(commits: GitCommit[]): void {
+export function printRecentCommits(commits: readonly GitCommit[]): void {
   if (!commits.length) {
     console.log()
     console.log(c.blue`i` + c.gray` No commits since the last version`)
