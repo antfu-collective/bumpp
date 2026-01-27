@@ -65,4 +65,10 @@ describe('loadCliArgs', async () => {
 
     expect(result.args.sign).toBe(true)
   })
+
+  it('should have configPath property set to the value of the `--configFilePath` flag', () => {
+    const result = loadCliArgs([...defaultArgs, '--configFilePath', 'test/fixtures/build.config.ts'])
+
+    expect(result.args.configFilePath).toBe('test/fixtures/build.config.ts')
+  })
 })
