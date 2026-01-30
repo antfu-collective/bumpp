@@ -118,7 +118,7 @@ describe('updateFiles with npmTag', () => {
     expect(pkg.publishConfig).toBeUndefined()
   })
 
-  it('should not remove publishConfig if tag is latest', async () => {
+  it('should remove entire publishConfig when only tag exists and new tag is latest', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0', publishConfig: { tag: 'alpha' } }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
     Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'latest' })
