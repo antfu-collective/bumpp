@@ -66,27 +66,27 @@ describe('loadCliArgs', async () => {
     expect(result.args.sign).toBe(true)
   })
 
-  it('sets the publishTag property to undefined if no npm-tag flag is present', () => {
+  it('sets the npmTag property to undefined if no npm-tag flag is present', () => {
     const result = loadCliArgs([...defaultArgs])
 
-    expect(result.args.publishTag).toBe(undefined)
+    expect(result.args.npmTag).toBe(undefined)
   })
 
-  it('sets the publishTag property to true if `--npm-tag` is present', () => {
+  it('sets the npmTag property to true if `--npm-tag` is present', () => {
     const result = loadCliArgs([...defaultArgs, '--npm-tag'])
 
-    expect(result.args.publishTag).toBe(true)
+    expect(result.args.npmTag).toBe(true)
   })
 
-  it('sets the publishTag property to "beta" if `--npm-tag beta` is present', () => {
+  it('sets the npmTag property to "beta" if `--npm-tag beta` is present', () => {
     const result = loadCliArgs([...defaultArgs, '--npm-tag', 'beta'])
 
-    expect(result.args.publishTag).toBe('beta')
+    expect(result.args.npmTag).toBe('beta')
   })
 
-  it('sets the publishTag property to "beta" if `--npm-tag=beta` is present', () => {
+  it('sets the npmTag property to "beta" if `--npm-tag=beta` is present', () => {
     const result = loadCliArgs([...defaultArgs, '--npm-tag=beta'])
 
-    expect(result.args.publishTag).toBe('beta')
+    expect(result.args.npmTag).toBe('beta')
   })
 })

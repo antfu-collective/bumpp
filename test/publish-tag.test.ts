@@ -10,49 +10,49 @@ import { updateFiles } from '../src/update-files'
 describe('resolvePublishTag', () => {
   it('should infer "beta" tag from prerelease version', async () => {
     prompts.inject(['beta'])
-    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), publishTag: true })
+    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), npmTag: true })
     Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
 
     await resolvePublishTag(operation)
-    expect(operation.state.publishTag).toBe('beta')
+    expect(operation.state.npmTag).toBe('beta')
   })
 
   it('should infer "latest" tag from release version', async () => {
     prompts.inject(['latest'])
-    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), publishTag: true })
+    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), npmTag: true })
     Object.assign(operation.state, { newVersion: '1.0.0' })
 
     await resolvePublishTag(operation)
-    expect(operation.state.publishTag).toBe('latest')
+    expect(operation.state.npmTag).toBe('latest')
   })
 
   it('should allow user to override tag', async () => {
     prompts.inject(['next'])
-    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), publishTag: true })
+    const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd(), npmTag: true })
     Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
 
     await resolvePublishTag(operation)
-    expect(operation.state.publishTag).toBe('next')
+    expect(operation.state.npmTag).toBe('next')
   })
 
-  it('should do nothing if publishTag is undefined', async () => {
+  it('should do nothing if npmTag is undefined', async () => {
     const operation = await Operation.start({ release: '1.0.0-beta.1', cwd: process.cwd() })
     Object.assign(operation.state, { newVersion: '1.0.0-beta.1' })
 
     await resolvePublishTag(operation)
-    expect(operation.state.publishTag).toBeUndefined()
+    expect(operation.state.npmTag).toBeUndefined()
   })
 
   it('should use provided tag string without prompting', async () => {
-    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), publishTag: 'next' })
+    const operation = await Operation.start({ release: '1.0.0', cwd: process.cwd(), npmTag: 'next' })
     Object.assign(operation.state, { newVersion: '1.0.0' })
 
     await resolvePublishTag(operation)
-    expect(operation.state.publishTag).toBe('next')
+    expect(operation.state.npmTag).toBe('next')
   })
 })
 
-describe('updateFiles with publishTag', () => {
+describe('updateFiles with npmTag', () => {
   let tmpDir: string
   let pkgPath: string
 
@@ -68,7 +68,7 @@ describe('updateFiles with publishTag', () => {
   it('should add publishConfig.tag if not present', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0' }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'beta' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'beta' })
 
     await updateFiles(operation)
 
@@ -80,7 +80,7 @@ describe('updateFiles with publishTag', () => {
   it('should update existing publishConfig.tag', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0', publishConfig: { tag: 'alpha' } }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'beta' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'beta' })
 
     await updateFiles(operation)
 
@@ -91,7 +91,7 @@ describe('updateFiles with publishTag', () => {
   it('should remove publishConfig.tag if tag is latest', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0', publishConfig: { tag: 'beta' } }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'latest' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'latest' })
 
     await updateFiles(operation)
 
@@ -110,7 +110,7 @@ describe('updateFiles with publishTag', () => {
   it('should not add publishConfig if tag is latest and not present', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0' }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'latest' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'latest' })
 
     await updateFiles(operation)
 
@@ -121,7 +121,7 @@ describe('updateFiles with publishTag', () => {
   it('should not remove publishConfig if tag is latest', async () => {
     fs.writeFileSync(pkgPath, JSON.stringify({ version: '1.0.0', publishConfig: { tag: 'alpha' } }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'latest' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'latest' })
 
     await updateFiles(operation)
 
@@ -135,7 +135,7 @@ describe('updateFiles with publishTag', () => {
       publishConfig: { tag: 'beta', access: 'public' },
     }, null, 2))
     const operation = await Operation.start({ release: '1.0.1', cwd: tmpDir })
-    Object.assign(operation.state, { newVersion: '1.0.1', publishTag: 'latest' })
+    Object.assign(operation.state, { newVersion: '1.0.1', npmTag: 'latest' })
 
     await updateFiles(operation)
 
@@ -174,7 +174,7 @@ describe('updateFiles in Monorepo', () => {
     // Simulate resolved tag
     Object.assign(operation.state, {
       newVersion: '1.0.1-beta.1',
-      publishTag: 'beta',
+      npmTag: 'beta',
     })
 
     await updateFiles(operation)

@@ -90,9 +90,9 @@ async function updateManifestFile(relPath: string, operation: Operation): Promis
     modified = true
   }
 
-  if (operation.state.publishTag) {
+  if (operation.state.npmTag) {
     const currentTag = (file.data.publishConfig as PublishConfig)?.tag
-    const newTag = operation.state.publishTag
+    const newTag = operation.state.npmTag
 
     if (newTag === 'latest') {
       if (currentTag) {

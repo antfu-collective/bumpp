@@ -142,8 +142,8 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
 function printSummary(operation: Operation) {
   console.log()
   console.log(`   files ${operation.options.files.map(i => c.bold(i)).join('\n         ')}`)
-  if (operation.state.publishTag)
-    console.log(` npm tag ${c.cyan.bold(operation.state.publishTag)}`)
+  if (operation.state.npmTag)
+    console.log(` npm tag ${c.cyan.bold(operation.state.npmTag)}`)
   if (operation.options.commit)
     console.log(`  commit ${c.bold(formatVersionString(operation.options.commit.message, operation.state.newVersion))}`)
   if (operation.options.tag)

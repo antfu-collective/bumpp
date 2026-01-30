@@ -10,13 +10,13 @@ export type PublishConfig = Partial<{
 }>
 
 export async function resolvePublishTag(operation: Operation) {
-  if (!operation.options.publishTag) {
+  if (!operation.options.npmTag) {
     return
   }
 
-  if (typeof operation.options.publishTag === 'string') {
+  if (typeof operation.options.npmTag === 'string') {
     operation.update({
-      publishTag: operation.options.publishTag,
+      npmTag: operation.options.npmTag,
     })
     return
   }
@@ -36,7 +36,7 @@ export async function resolvePublishTag(operation: Operation) {
 
   if (tag) {
     operation.update({
-      publishTag: tag,
+      npmTag: tag,
     })
   }
 }

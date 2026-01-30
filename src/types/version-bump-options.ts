@@ -99,7 +99,7 @@ export interface VersionBumpOptions {
    *
    * Defaults to `undefined` (no action).
    */
-  publishTag?: boolean | string
+  npmTag?: boolean | string
 
   /**
    * Indicates whether to bypass git commit hooks (`git commit --no-verify`).
