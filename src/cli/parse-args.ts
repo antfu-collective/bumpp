@@ -47,6 +47,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         printCommits: args.printCommits,
         recursive: args.recursive,
         release: args.release,
+        configFilePath: args.configFilePath,
       }),
     }
 
@@ -94,6 +95,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--print-commits', 'Print recent commits')
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
     .option('--release <release>', `Release type or version number (e.g. 'major', 'minor', 'patch', 'prerelease', etc. default: ${bumpConfigDefaults.release})`)
+    .option('--configFilePath <configFilePath>', `Path to custom build.config file`)
     .help()
 
   const result = cli.parse(argv)
