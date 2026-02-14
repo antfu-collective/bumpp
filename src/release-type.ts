@@ -1,11 +1,11 @@
 import type { TruncationType } from 'verkit'
 
-export type ReleaseType = TruncationType | 'next' | 'conventional'
+export type ReleaseType = TruncationType | 'next' | 'conventional' | 'conventional-prerelease'
 
 /**
  * The different types of pre-releases.
  */
-export const prereleaseTypes: ReleaseType[] = ['premajor', 'preminor', 'prepatch', 'prerelease']
+export const prereleaseTypes: ReleaseType[] = ['premajor', 'preminor', 'prepatch', 'prerelease', 'conventional-prerelease']
 
 /**
  * All possible release types.
