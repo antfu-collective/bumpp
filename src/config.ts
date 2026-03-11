@@ -17,6 +17,7 @@ export const bumpConfigDefaults: VersionBumpOptions = {
   all: false,
   noGitCheck: true,
   files: [],
+  configFilePath: undefined,
 }
 
 export async function loadBumpConfig(
@@ -28,6 +29,7 @@ export async function loadBumpConfig(
   const { config } = await loadConfig<VersionBumpOptions>({
     name,
     defaults: bumpConfigDefaults,
+    configFile: overrides?.configFilePath || undefined,
     overrides: {
       ...(overrides as VersionBumpOptions),
     },

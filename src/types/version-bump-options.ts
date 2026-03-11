@@ -166,6 +166,13 @@ export interface VersionBumpOptions {
   printCommits?: boolean
 
   /**
+   * The path to the config file
+   * If not provided, it will be inferred from the current working directory.
+   * @default undefined
+   */
+  configFilePath?: string
+
+  /**
    * Custom function to provide the version number
    */
   customVersion?: (currentVersion: string, semver: typeof _semver) => Promise<string | void> | string | void

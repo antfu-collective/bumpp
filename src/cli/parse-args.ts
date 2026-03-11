@@ -48,6 +48,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         recursive: args.recursive,
         release: args.release,
         npmTag: args.npmTag,
+        configFilePath: args.configFilePath,
       }),
     }
 
@@ -96,6 +97,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--npm-tag [tag]', 'Npm publish tag', { default: undefined })
     .option('-x, --execute <command>', 'Commands to execute after version bumps')
     .option('--release <release>', `Release type or version number (e.g. 'major', 'minor', 'patch', 'prerelease', etc. default: ${bumpConfigDefaults.release})`)
+    .option('--configFilePath <configFilePath>', `Path to custom build.config file`)
     .help()
 
   const result = cli.parse(argv)

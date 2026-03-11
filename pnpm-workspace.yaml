@@ -1,3 +1,5 @@
+shellEmulator: true
+trustPolicy: no-downgrade
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
