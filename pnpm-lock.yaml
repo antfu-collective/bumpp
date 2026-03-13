@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      ansis:
-        specifier: ^4.2.0
-        version: 4.2.0
       args-tokenizer:
         specifier: ^0.3.0
         version: 0.3.0

@@ -1,6 +1,6 @@
-import c from 'ansis'
+import { styleText } from 'node:util'
 
 export const symbols = {
-  success: c.green('✔'),
-  info: c.blue('ℹ'),
+  success: styleText('green', '✔'),
+  info: styleText('blue', 'ℹ'),
 }

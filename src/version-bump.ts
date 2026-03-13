@@ -1,7 +1,7 @@
 import type { VersionBumpOptions } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
-import c from 'ansis'
+import { styleText } from 'node:util'
 import { tokenizeArgs } from 'args-tokenizer'
 import prompts from 'prompts'
 import { getRecentCommits } from 'tiny-conventional-commits-parser'
@@ -138,20 +138,20 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
 
 function printSummary(operation: Operation) {
   console.log()
-  console.log(`   files ${operation.options.files.map(i => c.bold(i)).join('\n         ')}`)
+  console.log(`   files ${operation.options.files.map(i => styleText('bold', i)).join('\n         ')}`)
   if (operation.options.commit)
-    console.log(`  commit ${c.bold(formatVersionString(operation.options.commit.message, operation.state.newVersion))}`)
+    console.log(`  commit ${styleText('bold', formatVersionString(operation.options.commit.message, operation.state.newVersion))}`)
   if (operation.options.tag)
-    console.log(`     tag ${c.bold(formatVersionString(operation.options.tag.name, operation.state.newVersion))}`)
+    console.log(`     tag ${styleText('bold', formatVersionString(operation.options.tag.name, operation.state.newVersion))}`)
   if (operation.options.execute)
-    console.log(` execute ${c.bold(typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
+    console.log(` execute ${styleText('bold', typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
   if (operation.options.push)
-    console.log(`    push ${c.cyan.bold('yes')}`)
+    console.log(`    push ${styleText(['cyan', 'bold'], 'yes')}`)
   if (operation.options.install)
-    console.log(` install ${c.cyan.bold('yes')}`)
+    console.log(` install ${styleText(['cyan', 'bold'], 'yes')}`)
   console.log()
-  console.log(`    from ${c.bold(operation.state.currentVersion)}`)
-  console.log(`      to ${c.green.bold(operation.state.newVersion)}`)
+  console.log(`    from ${styleText('bold', operation.state.currentVersion)}`)
+  console.log(`      to ${styleText(['green', 'bold'], operation.state.newVersion)}`)
   console.log()
 }
 

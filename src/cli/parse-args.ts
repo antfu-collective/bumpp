@@ -1,6 +1,6 @@
 import type { VersionBumpOptions } from '../types/version-bump-options'
 import process from 'node:process'
-import c from 'ansis'
+import { styleText } from 'node:util'
 import cac from 'cac'
 import { valid as isValidVersion } from 'semver'
 import { version } from '../../package.json'
@@ -62,7 +62,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
     }
 
     if (parsedArgs.options.recursive && parsedArgs.options.files?.length)
-      console.log(c.yellow('The --recursive option is ignored when files are specified'))
+      console.log(styleText('yellow', 'The --recursive option is ignored when files are specified'))
 
     return parsedArgs
   }
