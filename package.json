@@ -83,7 +83,7 @@
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.39.2",
     "prompts": "^2.4.2",
-    "rimraf": "^6.1.2",
+    "premove": "^4.0.0",
     "tiny-conventional-commits-parser": "^0.1.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
