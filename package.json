@@ -33,13 +33,10 @@
     "prompt"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./dist/index.mjs",
+    "./cli": "./dist/cli.mjs",
+    "./package.json": "./package.json"
   },
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.mts",
   "bin": {
     "bumpp": "bin/bumpp.mjs"
@@ -53,14 +50,19 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "unbuild",
-    "stub": "unbuild --stub",
+    "build": "tsdown",
     "start": "tsx src/cli/run.ts",
     "test": "vitest",
     "bumpp": "tsx src/cli/run.ts",
     "prepublishOnly": "pnpm run build",
     "release": "pnpm run bumpp",
     "typecheck": "tsc --noEmit"
+  },
+  "inlinedDependencies": {
+    "kleur": "3.0.3",
+    "prompts": "2.4.2",
+    "sisteransi": "1.0.5",
+    "tiny-conventional-commits-parser": "0.1.0"
   },
   "dependencies": {
     "ansis": "^4.2.0",
@@ -84,9 +86,9 @@
     "premove": "^4.0.0",
     "prompts": "^2.4.2",
     "tiny-conventional-commits-parser": "^0.1.0",
+    "tsdown": "^0.21.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
     "vitest": "^4.0.18"
   }
 }
