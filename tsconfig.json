@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "strictBindCallApply": true,
     "strictNullChecks": true,
