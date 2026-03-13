@@ -34,7 +34,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     }
   },
@@ -53,8 +53,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "unbuild",
-    "stub": "unbuild --stub",
+    "build": "tsdown",
     "start": "tsx src/cli/run.ts",
     "test": "vitest",
     "bumpp": "tsx src/cli/run.ts",
@@ -87,7 +86,7 @@
     "tiny-conventional-commits-parser": "^0.1.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
+    "tsdown": "^0.21.2",
     "vitest": "^4.0.18"
   }
 }
