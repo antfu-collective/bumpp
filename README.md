@@ -11,6 +11,7 @@ Forked from [`version-bump-prompt`](https://github.com/JS-DevTools/version-bump-
 - Confirmation before bumping.
 - Enable `--commit` `--tag` `--push` by default. (opt-out by `--no-push`, etc.)
 - `-r` or `--recursive` to bump all packages in the monorepo.
+- `--npm-tag` to update the npm publish tag (e.g. `latest`, `next`, `beta`) in `package.json`.
 - `--execute` to execute the command, or execute a function before committing.
 - Conventional Commits by default.
 - Ships ESM and CJS bundles.

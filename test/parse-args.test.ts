@@ -66,6 +66,30 @@ describe('loadCliArgs', async () => {
     expect(result.args.sign).toBe(true)
   })
 
+  it('sets the npmTag property to undefined if no npm-tag flag is present', () => {
+    const result = loadCliArgs([...defaultArgs])
+
+    expect(result.args.npmTag).toBe(undefined)
+  })
+
+  it('sets the npmTag property to true if `--npm-tag` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--npm-tag'])
+
+    expect(result.args.npmTag).toBe(true)
+  })
+
+  it('sets the npmTag property to "beta" if `--npm-tag beta` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--npm-tag', 'beta'])
+
+    expect(result.args.npmTag).toBe('beta')
+  })
+
+  it('sets the npmTag property to "beta" if `--npm-tag=beta` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--npm-tag=beta'])
+
+    expect(result.args.npmTag).toBe('beta')
+  })
+
   it('should have configFilePath property set to the value of the `--configFilePath` flag', () => {
     const result = loadCliArgs([...defaultArgs, '--configFilePath', 'test/fixtures/build.config.ts'])
 

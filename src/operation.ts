@@ -14,6 +14,7 @@ interface OperationState {
   newVersion: string
   commitMessage: string
   tagName: string
+  npmTag?: string
   updatedFiles: string[]
   skippedFiles: string[]
 }
