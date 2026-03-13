@@ -15,8 +15,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       cac:
-        specifier: ^6.7.14
-        version: 6.7.14
+        specifier: ^7.0.0
+        version: 7.0.0
       jsonc-parser:
         specifier: ^3.3.1
         version: 3.3.1

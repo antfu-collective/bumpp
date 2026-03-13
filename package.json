@@ -46,7 +46,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "lint": "eslint .",
@@ -67,7 +67,7 @@
   "dependencies": {
     "ansis": "^4.2.0",
     "args-tokenizer": "^0.3.0",
-    "cac": "^6.7.14",
+    "cac": "^7.0.0",
     "jsonc-parser": "^3.3.1",
     "package-manager-detector": "^1.6.0",
     "semver": "^7.7.3",
