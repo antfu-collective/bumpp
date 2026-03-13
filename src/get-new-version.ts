@@ -3,7 +3,7 @@ import type { BumpRelease, PromptRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
 import process from 'node:process'
-import c from 'ansis'
+import { styleText } from 'node:util'
 import prompts from 'prompts'
 import semver, { clean as cleanVersion, valid as isValidVersion, SemVer } from 'semver'
 import { isPrerelease, releaseTypes } from './release-type'
@@ -115,23 +115,23 @@ async function promptForNewVersion(operation: Operation, commits: GitCommit[]): 
     {
       type: 'autocomplete',
       name: 'release',
-      message: `Current version ${c.green(currentVersion)}`,
+      message: `Current version ${styleText('green', currentVersion)}`,
       initial: configCustomVersion ? 'config' : 'next',
       choices: [
-        { value: 'major', title: `${'major'.padStart(PADDING, ' ')} ${c.bold(next.major)}` },
-        { value: 'minor', title: `${'minor'.padStart(PADDING, ' ')} ${c.bold(next.minor)}` },
-        { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${c.bold(next.patch)}` },
-        { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${c.bold(next.next)}` },
-        { value: 'conventional', title: `${'conventional'.padStart(PADDING, ' ')} ${c.bold(next.conventional)}` },
+        { value: 'major', title: `${'major'.padStart(PADDING, ' ')} ${styleText('bold', next.major)}` },
+        { value: 'minor', title: `${'minor'.padStart(PADDING, ' ')} ${styleText('bold', next.minor)}` },
+        { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${styleText('bold', next.patch)}` },
+        { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${styleText('bold', next.next)}` },
+        { value: 'conventional', title: `${'conventional'.padStart(PADDING, ' ')} ${styleText('bold', next.conventional)}` },
         ...configCustomVersion
           ? [
-              { value: 'config', title: `${'from config'.padStart(PADDING, ' ')} ${c.bold(configCustomVersion)}` },
+              { value: 'config', title: `${'from config'.padStart(PADDING, ' ')} ${styleText('bold', configCustomVersion)}` },
             ]
           : [],
-        { value: 'prepatch', title: `${'pre-patch'.padStart(PADDING, ' ')} ${c.bold(next.prepatch)}` },
-        { value: 'preminor', title: `${'pre-minor'.padStart(PADDING, ' ')} ${c.bold(next.preminor)}` },
-        { value: 'premajor', title: `${'pre-major'.padStart(PADDING, ' ')} ${c.bold(next.premajor)}` },
-        { value: 'none', title: `${'as-is'.padStart(PADDING, ' ')} ${c.bold(currentVersion)}` },
+        { value: 'prepatch', title: `${'pre-patch'.padStart(PADDING, ' ')} ${styleText('bold', next.prepatch)}` },
+        { value: 'preminor', title: `${'pre-minor'.padStart(PADDING, ' ')} ${styleText('bold', next.preminor)}` },
+        { value: 'premajor', title: `${'pre-major'.padStart(PADDING, ' ')} ${styleText('bold', next.premajor)}` },
+        { value: 'none', title: `${'as-is'.padStart(PADDING, ' ')} ${styleText('bold', currentVersion)}` },
         { value: 'custom', title: 'custom ...'.padStart(PADDING + 4, ' ') },
       ],
     },

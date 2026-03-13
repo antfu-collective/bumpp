@@ -1,31 +1,41 @@
 import type { GitCommit } from 'tiny-conventional-commits-parser'
-import c from 'ansis'
+import type { InspectColor } from 'node:util'
+import { styleText } from 'node:util'
 
-const messageColorMap: Record<string, (c: string) => string> = {
-  feat: c.green,
-  feature: c.green,
+const colorFn = (color: InspectColor) => (s: string) => styleText(color, s)
+const gray = colorFn('gray')
+const green = colorFn('green')
+const cyan = colorFn('cyan')
+const blue = colorFn('blue')
+const yellow = colorFn('yellow')
+const magenta = colorFn('magenta')
+const red = colorFn('red')
 
-  refactor: c.cyan,
-  style: c.cyan,
+const messageColorMap: Record<string, (s: string) => string> = {
+  feat: green,
+  feature: green,
 
-  docs: c.blue,
-  doc: c.blue,
-  types: c.blue,
-  type: c.blue,
+  refactor: cyan,
+  style: cyan,
 
-  chore: c.gray,
-  ci: c.gray,
-  build: c.gray,
-  deps: c.gray,
-  dev: c.gray,
+  docs: blue,
+  doc: blue,
+  types: blue,
+  type: blue,
 
-  fix: c.yellow,
-  test: c.yellow,
+  chore: gray,
+  ci: gray,
+  build: gray,
+  deps: gray,
+  dev: gray,
 
-  perf: c.magenta,
+  fix: yellow,
+  test: yellow,
 
-  revert: c.red,
-  breaking: c.red,
+  perf: magenta,
+
+  revert: red,
+  breaking: red,
 }
 
 export function formatParsedCommits(commits: GitCommit[]) {
@@ -33,25 +43,25 @@ export function formatParsedCommits(commits: GitCommit[]) {
   const scopeLength = commits.map(({ scope }) => scope.length).reduce((a, b) => Math.max(a, b), 0)
 
   return commits.map((commit) => {
-    let color = messageColorMap[commit.type] || ((c: string) => c)
+    let color = messageColorMap[commit.type] || ((s: string) => s)
     if (commit.isBreaking) {
-      color = s => c.inverse.red(s)
+      color = s => styleText(['inverse', 'red'], s)
     }
 
     const paddedType = commit.type.padStart(typeLength + 1, ' ')
     const paddedScope = !commit.scope
       ? ' '.repeat(scopeLength ? scopeLength + 2 : 0)
-      : c.dim`(` + commit.scope + c.dim`)` + ' '.repeat(scopeLength - commit.scope.length)
+      : styleText('dim', '(') + commit.scope + styleText('dim', ')') + ' '.repeat(scopeLength - commit.scope.length)
 
     return [
-      c.dim(commit.shortHash),
+      styleText('dim', commit.shortHash),
       ' ',
-      color === c.gray ? color(paddedType) : c.bold(color(paddedType)),
+      color === gray ? color(paddedType) : styleText('bold', color(paddedType)),
       ' ',
       paddedScope,
-      c.dim(':'),
+      styleText('dim', ':'),
       ' ',
-      color === c.gray ? color(commit.description) : commit.description,
+      color === gray ? color(commit.description) : commit.description,
     ].join('')
   })
 }
@@ -59,7 +69,7 @@ export function formatParsedCommits(commits: GitCommit[]) {
 export function printRecentCommits(commits: GitCommit[]): void {
   if (!commits.length) {
     console.log()
-    console.log(c.blue`i` + c.gray` No commits since the last version`)
+    console.log(styleText('blue', 'i') + styleText('gray', ' No commits since the last version'))
     console.log()
     return
   }
@@ -67,7 +77,7 @@ export function printRecentCommits(commits: GitCommit[]): void {
   const prettified = formatParsedCommits(commits)
 
   console.log()
-  console.log(c.bold`${c.green(commits.length)} Commits since the last version:`)
+  console.log(styleText('bold', `${styleText('green', String(commits.length))} Commits since the last version:`))
   console.log()
   console.log(prettified.join('\n'))
   console.log()
