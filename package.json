@@ -33,13 +33,10 @@
     "prompt"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./dist/index.mjs",
+    "./cli": "./dist/cli.mjs",
+    "./package.json": "./package.json"
   },
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.mts",
   "bin": {
     "bumpp": "bin/bumpp.mjs"
@@ -53,8 +50,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "unbuild",
-    "stub": "unbuild --stub",
+    "build": "tsdown",
     "start": "tsx src/cli/run.ts",
     "test": "vitest",
     "bumpp": "tsx src/cli/run.ts",
@@ -62,17 +58,22 @@
     "release": "pnpm run bumpp",
     "typecheck": "tsc --noEmit"
   },
+  "inlinedDependencies": {
+    "kleur": "3.0.3",
+    "prompts": "2.4.2",
+    "sisteransi": "1.0.5",
+    "tiny-conventional-commits-parser": "0.1.0"
+  },
   "dependencies": {
     "ansis": "^4.2.0",
     "args-tokenizer": "^0.3.0",
-    "c12": "^3.3.3",
     "cac": "^7.0.0",
-    "escalade": "^3.2.0",
     "jsonc-parser": "^3.3.1",
     "package-manager-detector": "^1.6.0",
     "semver": "^7.7.3",
     "tinyexec": "^1.0.2",
     "tinyglobby": "^0.2.15",
+    "unconfig": "^7.5.0",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
@@ -82,12 +83,12 @@
     "@types/semver": "^7.7.1",
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.39.2",
+    "premove": "^4.0.0",
     "prompts": "^2.4.2",
-    "rimraf": "^6.1.2",
     "tiny-conventional-commits-parser": "^0.1.0",
+    "tsdown": "^0.21.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
     "vitest": "^4.0.18"
   }
 }
