@@ -33,12 +33,11 @@ export async function loadBumpConfig(
           }
         : {
             files: `${name}.config`,
-            extensions: customPath ? [] : ['ts', 'mts', 'js', 'mjs', 'json'],
+            extensions: ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs', 'json'],
           },
     ],
     defaults: bumpConfigDefaults,
     cwd,
-    merge: false,
   })
 
   return {
