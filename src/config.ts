@@ -1,7 +1,7 @@
 import type { VersionBumpOptions } from './types/version-bump-options'
-import { dirname } from 'node:path'
+import { basename, dirname } from 'node:path'
 import process from 'node:process'
-import { loadConfig } from 'c12'
+import { loadConfig } from 'unconfig'
 import escalade from 'escalade/sync'
 
 export const bumpConfigDefaults: VersionBumpOptions = {
@@ -25,18 +25,25 @@ export async function loadBumpConfig(
   cwd = process.cwd(),
 ) {
   const name = 'bump'
-  const configFile = findConfigFile(name, cwd)
+  const customPath = overrides?.configFilePath
+  const configFile = customPath || findConfigFile(name, cwd)
+
   const { config } = await loadConfig<VersionBumpOptions>({
-    name,
+    sources: [
+      {
+        files: customPath ? basename(customPath) : `${name}.config`,
+        extensions: customPath ? [] : ['ts', 'mts', 'js', 'mjs', 'json'],
+      },
+    ],
     defaults: bumpConfigDefaults,
-    configFile: overrides?.configFilePath || undefined,
-    overrides: {
-      ...(overrides as VersionBumpOptions),
-    },
     cwd: configFile ? dirname(configFile) : cwd,
+    merge: false,
   })
 
-  return config!
+  return {
+    ...config,
+    ...(overrides as VersionBumpOptions),
+  }
 }
 
 function findConfigFile(name: string, cwd: string) {
