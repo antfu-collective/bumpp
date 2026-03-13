@@ -10,7 +10,7 @@ export const prereleaseTypes: ReleaseType[] = ['premajor', 'preminor', 'prepatch
 /**
  * All possible release types.
  */
-export const releaseTypes: ReleaseType[] = prereleaseTypes.concat(['major', 'minor', 'patch', 'next', 'conventional'])
+export const releaseTypes: ReleaseType[] = [...prereleaseTypes, 'major', 'minor', 'patch', 'next', 'conventional']
 
 /**
  * Determines whether the specified value is a pre-release.

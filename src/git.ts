@@ -33,7 +33,7 @@ export async function gitCommit(operation: Operation): Promise<Operation> {
 
   // Append the file names last, as variadic arguments
   if (!all)
-    args = args.concat(updatedFiles)
+    args = [...args, ...updatedFiles]
 
   await x('git', ['commit', ...args], { throwOnError: true })
 
@@ -99,7 +99,7 @@ export async function gitPush(operation: Operation): Promise<Operation> {
  */
 export function formatVersionString(template: string, newVersion: string): string {
   if (template.includes('%s'))
-    return template.replace(/%s/g, newVersion)
+    return template.replaceAll('%s', newVersion)
 
   else
     return template + newVersion

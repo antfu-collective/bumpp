@@ -4,6 +4,7 @@
 
 Forked from [`version-bump-prompt`](https://github.com/JS-DevTools/version-bump-prompt)
 
+<!-- eslint-disable-next-line markdown/heading-increment -->
 ###### Changes in this fork
 
 - Renamed to `bumpp` - so you can use `npx bumpp` directly.

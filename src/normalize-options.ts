@@ -148,7 +148,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     // start with ! or already in files should be excluded
     const withoutExcludedWorkspaces = workspacesWithPackageJson.filter(workspace => !workspace.startsWith('!') && !raw.files?.includes(workspace))
     // add to files
-    raw.files = raw.files.concat(withoutExcludedWorkspaces)
+    raw.files = [...raw.files, ...withoutExcludedWorkspaces]
   }
   else {
     raw.files = raw.files?.length

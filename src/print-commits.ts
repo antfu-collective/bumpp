@@ -1,5 +1,5 @@
-import type { GitCommit } from 'tiny-conventional-commits-parser'
 import type { InspectColor } from 'node:util'
+import type { GitCommit } from 'tiny-conventional-commits-parser'
 import { styleText } from 'node:util'
 
 const colorFn = (color: InspectColor) => (s: string) => styleText(color, s)
