@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-'use strict'
-import('../dist/cli.mjs')
-  .then(r => r.main())
+import { main } from '../dist/cli.mjs'
+
+main()
