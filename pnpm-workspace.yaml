@@ -1,5 +1,6 @@
+allowBuilds:
+  esbuild: false
+
 shellEmulator: true
 trustPolicy: no-downgrade
-onlyBuiltDependencies:
-  - esbuild
-  - unrs-resolver
+trustPolicyIgnoreAfter: 604800 # 7 days
