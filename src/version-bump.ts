@@ -1,3 +1,4 @@
+import type { GitCommit } from 'tiny-conventional-commits-parser'
 import type { VersionBumpOptions } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
@@ -50,8 +51,8 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
     arg = { release: arg }
 
   const operation = await Operation.start(arg)
+  const commits = getCommits(operation)
 
-  const commits = getRecentCommits()
   if (operation.options.printCommits) {
     printRecentCommits(commits)
   }
@@ -163,10 +164,23 @@ export async function versionBumpInfo(arg: VersionBumpOptions | string = {}): Pr
     arg = { release: arg }
 
   const operation = await Operation.start(arg)
-  const commits = getRecentCommits()
+  const commits = getCommits(operation)
 
   // Get the old and new version numbers
   await getCurrentVersion(operation)
   await getNewVersion(operation, commits)
   return operation
+}
+
+/** A wrapper around the `getRecentCommits` function from "tiny-conventional-commits-parser". */
+function getCommits(operation: Operation): readonly GitCommit[] {
+  // Only fetch commits when they are actually needed:
+  // - When printCommits is enabled
+  // - When release type is 'prompt' (user needs to see conventional commit suggestions)
+  // - When release type is 'conventional' (need to determine semver change from commits)
+  const needsCommits = operation.options.printCommits
+    || operation.options.release.type === 'prompt'
+    || operation.options.release.type === 'conventional'
+
+  return needsCommits ? getRecentCommits() : []
 }
