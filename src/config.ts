@@ -40,9 +40,17 @@ export async function loadBumpConfig(
     cwd,
   })
 
+  // Omit undefined overrides so they don't overwrite defaults (undefined = "use default")
+  const definedOverrides = overrides
+    ? Object.fromEntries(
+        Object.entries(overrides).filter(([, v]) => v !== undefined),
+      ) as Partial<VersionBumpOptions>
+    : {}
+
   return {
+    ...bumpConfigDefaults,
     ...config,
-    ...overrides,
+    ...definedOverrides,
   }
 }
 
