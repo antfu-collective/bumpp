@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { loadCliArgs } from '../src/cli/parse-args'
+import { loadCliArgs, parseArgs } from '../src/cli/parse-args'
+import { loadBumpConfig } from '../src/config'
 
 const defaultArgs = ['node', 'bumpp']
 
@@ -70,5 +71,29 @@ describe('loadCliArgs', async () => {
     const result = loadCliArgs([...defaultArgs, '--configFilePath', 'test/fixtures/build.config.ts'])
 
     expect(result.args.configFilePath).toBe('test/fixtures/build.config.ts')
+  })
+})
+
+describe('loadBumpConfig (confirm regression fix)', () => {
+  it('preserves default confirm when overrides pass confirm: undefined', async () => {
+    const config = await loadBumpConfig({ confirm: undefined })
+    expect(config.confirm).toBe(true)
+  })
+
+  it('preserves default noGitCheck when overrides pass noGitCheck: undefined', async () => {
+    const config = await loadBumpConfig({ noGitCheck: undefined })
+    expect(config.noGitCheck).toBe(true)
+  })
+
+  it('applies explicit confirm: false when --yes would be passed', async () => {
+    const config = await loadBumpConfig({ confirm: false })
+    expect(config.confirm).toBe(false)
+  })
+})
+
+describe('parseArgs (confirm regression fix)', () => {
+  it('has confirm: true when run without --yes (prompts before bump)', async () => {
+    const { options } = await parseArgs()
+    expect(options.confirm).toBe(true)
   })
 })
