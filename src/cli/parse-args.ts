@@ -25,6 +25,18 @@ export async function parseArgs(): Promise<ParsedArgs> {
   try {
     const { args, resultArgs } = loadCliArgs()
 
+    // Strip a leading release type / version number from positional args before
+    // passing files to loadBumpConfig, so it doesn't override config-file `files`.
+    const rawFiles = [...(args['--'] || []), ...resultArgs]
+    let releaseFromArgs: string | undefined
+    if (rawFiles.length > 0) {
+      const firstArg = rawFiles[0]
+      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
+        releaseFromArgs = firstArg
+        rawFiles.shift()
+      }
+    }
+
     const parsedArgs: ParsedArgs = {
       help: args.help as boolean,
       version: args.version as boolean,
@@ -40,25 +52,15 @@ export async function parseArgs(): Promise<ParsedArgs> {
         confirm: args.yes === undefined ? undefined : !args.yes,
         noVerify: args.verify === undefined ? undefined : !args.verify,
         install: args.install,
-        files: [...(args['--'] || []), ...resultArgs],
+        files: rawFiles.length ? rawFiles : undefined,
         ignoreScripts: args.ignoreScripts,
         currentVersion: args.currentVersion,
         execute: args.execute,
         printCommits: args.printCommits,
         recursive: args.recursive,
-        release: args.release,
+        release: args.release ?? releaseFromArgs,
         configFilePath: args.configFilePath,
       }),
-    }
-
-    // If a version number or release type was specified, then it will mistakenly be added to the "files" array
-    if (parsedArgs.options.files && parsedArgs.options.files.length > 0) {
-      const firstArg = parsedArgs.options.files[0]
-
-      if (firstArg === 'prompt' || isReleaseType(firstArg) || isValidVersion(firstArg)) {
-        parsedArgs.options.release = firstArg
-        parsedArgs.options.files.shift()
-      }
     }
 
     if (parsedArgs.options.recursive && parsedArgs.options.files?.length)
