@@ -35,7 +35,7 @@ export async function gitCommit(operation: Operation): Promise<Operation> {
   if (!all)
     args = [...args, ...updatedFiles]
 
-  await x('git', ['commit', ...args], { throwOnError: true })
+  await x('git', ['commit', ...args], { throwOnError: true, nodeOptions: { stdio: 'inherit' } })
 
   return operation.update({ event: ProgressEvent.GitCommit, commitMessage })
 }
@@ -69,7 +69,7 @@ export async function gitTag(operation: Operation): Promise<Operation> {
     args.push('--sign')
   }
 
-  await x('git', ['tag', ...args], { throwOnError: true })
+  await x('git', ['tag', ...args], { throwOnError: true, nodeOptions: { stdio: 'inherit' } })
 
   return operation.update({ event: ProgressEvent.GitTag, tagName })
 }
@@ -82,11 +82,11 @@ export async function gitPush(operation: Operation): Promise<Operation> {
     return operation
 
   // Push the commit
-  await x('git', ['push'], { throwOnError: true })
+  await x('git', ['push'], { throwOnError: true, nodeOptions: { stdio: 'inherit' } })
 
   if (operation.options.tag) {
     // Push the tag
-    await x('git', ['push', '--tags'], { throwOnError: true })
+    await x('git', ['push', '--tags'], { throwOnError: true, nodeOptions: { stdio: 'inherit' } })
   }
 
   return operation.update({ event: ProgressEvent.GitPush })
