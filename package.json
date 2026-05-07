@@ -2,7 +2,7 @@
   "name": "bumpp",
   "type": "module",
   "version": "11.0.1",
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@10.33.4",
   "description": "Bump version, commit changes, tag, and push to Git",
   "authors": [
     {
@@ -64,10 +64,10 @@
     "jsonc-parser": "^3.3.1",
     "package-manager-detector": "^1.6.0",
     "semver": "^7.7.4",
-    "tinyexec": "^1.0.4",
-    "tinyglobby": "^0.2.15",
+    "tinyexec": "^1.1.2",
+    "tinyglobby": "^0.2.16",
     "unconfig": "^7.5.0",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.4"
   },
   "inlinedDependencies": {
     "kleur": "3.0.3",
@@ -76,19 +76,19 @@
     "tiny-conventional-commits-parser": "0.1.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.7.2",
-    "@types/node": "^25.5.0",
+    "@antfu/eslint-config": "^8.2.0",
+    "@types/node": "^25.6.0",
     "@types/prompts": "^2.4.9",
     "@types/semver": "^7.7.1",
     "@typescript/native-preview": "7.0.0-dev.20260314.1",
-    "baseline-browser-mapping": "^2.10.8",
-    "eslint": "^10.0.3",
+    "baseline-browser-mapping": "^2.10.27",
+    "eslint": "^10.3.0",
     "premove": "^4.0.0",
     "prompts": "^2.4.2",
     "tiny-conventional-commits-parser": "^0.1.0",
-    "tsdown": "^0.21.2",
+    "tsdown": "^0.21.10",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
   }
 }

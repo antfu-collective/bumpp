@@ -108,7 +108,7 @@ async function updateTextFile(relPath: string, operation: Operation): Promise<bo
   // Only update the file if it contains at least one occurrence of the old version
   if (file.data.includes(currentVersion)) {
     // Escape all non-alphanumeric characters in the version
-    // eslint-disable-next-line e18e/prefer-static-regex
+
     const sanitizedVersion = currentVersion.replace(/(\W)/g, '\\$1')
 
     // Replace occurrences of the old version number that are surrounded by word boundaries.
