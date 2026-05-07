@@ -97,3 +97,17 @@ describe('parseArgs (confirm regression fix)', () => {
     expect(options.confirm).toBe(true)
   })
 })
+
+describe('loadBumpConfig (files override fix #119)', () => {
+  const fixtureDir = new URL('./fixtures', import.meta.url).pathname
+
+  it('preserves config files when no CLI files are passed (files: undefined)', async () => {
+    const config = await loadBumpConfig({ files: undefined }, fixtureDir)
+    expect(config.files).toEqual(['custom.json', 'packages/**/package.json'])
+  })
+
+  it('overrides config files when CLI files are explicitly passed', async () => {
+    const config = await loadBumpConfig({ files: ['explicit.json'] }, fixtureDir)
+    expect(config.files).toEqual(['explicit.json'])
+  })
+})
