@@ -43,7 +43,10 @@ function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitC
     type = oldSemVer.prerelease.length ? 'prerelease' : 'patch'
   }
   else if (bump.type === 'conventional') {
-    type = oldSemVer.prerelease.length ? 'prerelease' : determineSemverChange(commits)
+    type = determineSemverChange(commits)
+  }
+  else if (bump.type === 'conventional-prerelease') {
+    type = oldSemVer.prerelease.length ? 'prerelease' : `pre${determineSemverChange(commits)}`
   }
   else {
     type = bump.type
@@ -123,6 +126,7 @@ async function promptForNewVersion(operation: Operation, commits: GitCommit[]): 
         { value: 'patch', title: `${'patch'.padStart(PADDING, ' ')} ${styleText('bold', next.patch)}` },
         { value: 'next', title: `${'next'.padStart(PADDING, ' ')} ${styleText('bold', next.next)}` },
         { value: 'conventional', title: `${'conventional'.padStart(PADDING, ' ')} ${styleText('bold', next.conventional)}` },
+        { value: 'conventional-prerelease', title: `${'conventional'.padStart(PADDING, ' ')} ${styleText('bold', next['conventional-prerelease'])}` },
         ...configCustomVersion
           ? [
               { value: 'config', title: `${'from config'.padStart(PADDING, ' ')} ${styleText('bold', configCustomVersion)}` },
