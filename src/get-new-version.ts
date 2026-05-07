@@ -11,7 +11,7 @@ import { isPrerelease, releaseTypes } from './release-type'
 /**
  * Determines the new version number, possibly by prompting the user for it.
  */
-export async function getNewVersion(operation: Operation, commits: GitCommit[]): Promise<Operation> {
+export async function getNewVersion(operation: Operation, commits: readonly GitCommit[]): Promise<Operation> {
   const { release } = operation.options
   const { currentVersion } = operation.state
 
@@ -35,7 +35,7 @@ export async function getNewVersion(operation: Operation, commits: GitCommit[]):
 /**
  * Returns the next version number of the specified type.
  */
-function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitCommit[]): string {
+function getNextVersion(currentVersion: string, bump: BumpRelease, commits: readonly GitCommit[]): string {
   const oldSemVer = new SemVer(currentVersion)
 
   let type: ReleaseType
@@ -68,7 +68,7 @@ function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitC
   return newSemVer.version
 }
 
-function determineSemverChange(commits: GitCommit[]) {
+function determineSemverChange(commits: readonly GitCommit[]) {
   let [hasMajor, hasMinor] = [false, false]
   for (const commit of commits) {
     if (commit.isBreaking) {
@@ -85,7 +85,7 @@ function determineSemverChange(commits: GitCommit[]) {
 /**
  * Returns the next version number for all release types.
  */
-function getNextVersions(currentVersion: string, preid: string, commits: GitCommit[]): Record<ReleaseType, string> {
+function getNextVersions(currentVersion: string, preid: string, commits: readonly GitCommit[]): Record<ReleaseType, string> {
   const next: Record<string, string> = {}
 
   const parse = semver.parse(currentVersion)
@@ -103,7 +103,7 @@ function getNextVersions(currentVersion: string, preid: string, commits: GitComm
  *
  * @returns - A tuple containing the new version number and the release type (if any)
  */
-async function promptForNewVersion(operation: Operation, commits: GitCommit[]): Promise<Operation> {
+async function promptForNewVersion(operation: Operation, commits: readonly GitCommit[]): Promise<Operation> {
   const { currentVersion } = operation.state
   const release = operation.options.release as PromptRelease
 
