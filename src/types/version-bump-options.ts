@@ -1,6 +1,10 @@
 import type _semver from 'semver'
 import type { Operation } from '../operation'
+import type { ReleaseType } from '../release-type'
 import type { VersionBumpProgress } from './version-bump-progress'
+
+export type VersionNumber = `${number}` | `${number}${string}`
+export type VersionBumpRelease = VersionNumber | ReleaseType | 'prompt'
 
 /**
  * Options for the `versionBump()` function.
@@ -15,7 +19,7 @@ export interface VersionBumpOptions {
    *
    * Defaults to "prompt".
    */
-  release?: string
+  release?: VersionBumpRelease
 
   /**
    * The current version number to be bumpped.
