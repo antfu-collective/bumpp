@@ -1,5 +1,5 @@
 import type { Operation } from './operation'
-import { valid as isValidVersion } from 'semver'
+import { isValid as isValidVersion } from 'verkit'
 import { readJsoncFile } from './fs'
 import { isManifest } from './manifest'
 

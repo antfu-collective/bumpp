@@ -1,6 +1,6 @@
-import type { ReleaseType as SemverReleaseType } from 'semver'
+import type { TruncationType } from 'verkit'
 
-export type ReleaseType = SemverReleaseType | 'next' | 'conventional'
+export type ReleaseType = TruncationType | 'next' | 'conventional'
 
 /**
  * The different types of pre-releases.

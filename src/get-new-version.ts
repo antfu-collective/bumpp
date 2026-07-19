@@ -1,11 +1,13 @@
 import type { GitCommit } from 'tiny-conventional-commits-parser'
+import type { TruncationType } from 'verkit'
 import type { BumpRelease, PromptRelease } from './normalize-options'
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
 import process from 'node:process'
 import { styleText } from 'node:util'
 import prompts from 'prompts'
-import semver, { clean as cleanVersion, valid as isValidVersion, SemVer } from 'semver'
+import * as verkit from 'verkit'
+import { clean as cleanVersion, increment as incrementVersion, isValid as isValidVersion, normalize as normalizeVersion, parse as parseVersion } from 'verkit'
 import { isPrerelease, releaseTypes } from './release-type'
 
 /**
@@ -21,7 +23,7 @@ export async function getNewVersion(operation: Operation, commits: GitCommit[]):
 
     case 'version':
       return operation.update({
-        newVersion: new SemVer(release.version, true).version,
+        newVersion: normalizeVersion(parseVersion(release.version, { loose: true }))!,
       })
 
     default:
@@ -36,9 +38,9 @@ export async function getNewVersion(operation: Operation, commits: GitCommit[]):
  * Returns the next version number of the specified type.
  */
 function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitCommit[]): string {
-  const oldSemVer = new SemVer(currentVersion)
+  const oldSemVer = parseVersion(currentVersion)
 
-  let type: ReleaseType
+  let type: TruncationType
   if (bump.type === 'next') {
     type = oldSemVer.prerelease.length ? 'prerelease' : 'patch'
   }
@@ -49,23 +51,10 @@ function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitC
     type = bump.type
   }
 
-  const newSemVer = oldSemVer.inc(type, bump.preid)
-
-  if (
-    isPrerelease(bump.type)
-    && newSemVer.prerelease.length === 2
-    && newSemVer.prerelease[0] === bump.preid
-    && String(newSemVer.prerelease[1]) === '0'
-  ) {
-    // This is a special case when going from a non-prerelease version to a prerelease version.
-    // SemVer sets the prerelease version to zero (e.g. "1.23.456" => "1.23.456-beta.0").
-    // But the user probably expected it to be "1.23.456-beta.1" instead.
-    // @ts-expect-error - TypeScript thinks this array is read-only
-    newSemVer.prerelease[1] = '1'
-    newSemVer.format()
-  }
-
-  return newSemVer.version
+  return incrementVersion(oldSemVer, type, {
+    identifier: bump.preid,
+    identifierBase: isPrerelease(bump.type) ? 1 : undefined,
+  })!
 }
 
 function determineSemverChange(commits: GitCommit[]) {
@@ -88,9 +77,9 @@ function determineSemverChange(commits: GitCommit[]) {
 function getNextVersions(currentVersion: string, preid: string, commits: GitCommit[]): Record<ReleaseType, string> {
   const next: Record<string, string> = {}
 
-  const parse = semver.parse(currentVersion)
-  if (typeof parse?.prerelease[0] === 'string')
-    preid = parse?.prerelease[0] || 'preid'
+  const parsed = parseVersion(currentVersion)
+  if (typeof parsed.prerelease[0] === 'string')
+    preid = parsed.prerelease[0] || 'preid'
 
   for (const type of releaseTypes)
     next[type] = getNextVersion(currentVersion, { type, preid }, commits)
@@ -108,7 +97,7 @@ async function promptForNewVersion(operation: Operation, commits: GitCommit[]): 
   const release = operation.options.release as PromptRelease
 
   const next = getNextVersions(currentVersion, release.preid, commits)
-  const configCustomVersion = await operation.options.customVersion?.(currentVersion, semver)
+  const configCustomVersion = await operation.options.customVersion?.(currentVersion, verkit)
 
   const PADDING = 13
   const answers = await prompts([
