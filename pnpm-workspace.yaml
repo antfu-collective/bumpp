@@ -3,6 +3,7 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - verkit
+  - tsdown
 
 shellEmulator: true
 trustPolicy: no-downgrade
