@@ -1,12 +1,18 @@
 import type { Operation } from './operation'
 import type { ReleaseType } from './release-type'
-import type { VersionBumpOptions } from './types/version-bump-options'
+import type { PullRequestBodyTokens, VersionBumpOptions } from './types/version-bump-options'
 import fsSync from 'node:fs'
 import fs from 'node:fs/promises'
 import process from 'node:process'
+import { styleText } from 'node:util'
 import { glob } from 'tinyglobby'
 import yaml from 'yaml'
 import { isReleaseType } from './release-type'
+
+/**
+ * The default release branch name template used by the pull-request flow.
+ */
+export const DEFAULT_PR_BRANCH = 'release/v{version}'
 
 interface Interface {
   input?: NodeJS.ReadableStream | NodeJS.ReadStream | false
@@ -44,6 +50,17 @@ export interface BumpRelease {
 export type Release = VersionRelease | PromptRelease | BumpRelease
 
 /**
+ * Normalized pull-request release options.
+ */
+export interface NormalizedPullRequestOptions {
+  branch: string
+  base?: string
+  title?: string
+  body?: string | ((tokens: PullRequestBodyTokens) => string)
+  draft: boolean
+}
+
+/**
  * Normalized and sanitized options
  */
 export interface NormalizedOptions {
@@ -67,6 +84,7 @@ export interface NormalizedOptions {
   printCommits?: boolean
   customVersion?: VersionBumpOptions['customVersion']
   currentVersion?: string
+  pr?: NormalizedPullRequestOptions
 }
 
 /**
@@ -101,6 +119,29 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
 
   else if (raw.tag)
     tag = { name: 'v' }
+
+  // Normalize the pull-request release options.
+  // NOTE: This must come BEFORE `commit`, because it can disable `tag` and
+  // requires `push`, and `commit` is implied by `tag`/`push`.
+  let pr: NormalizedPullRequestOptions | undefined
+  if (raw.pr) {
+    if (!push)
+      throw new Error('The `pr` option requires `push` to be enabled (remove `--no-push`).')
+
+    if (tag) {
+      console.warn(styleText('yellow', 'The `tag` option is ignored when `pr` is enabled; the tag is created by CI after the release pull request is merged.'))
+      tag = undefined
+    }
+
+    const rawPr = typeof raw.pr === 'object' ? raw.pr : {}
+    pr = {
+      branch: rawPr.branch || DEFAULT_PR_BRANCH,
+      base: rawPr.base,
+      title: rawPr.title,
+      body: rawPr.body,
+      draft: Boolean(rawPr.draft),
+    }
+  }
 
   // NOTE: This must come AFTER `tag` and `push`, because it relies on them
   let commit
@@ -205,5 +246,6 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     printCommits: raw.printCommits ?? true,
     customVersion: raw.customVersion,
     currentVersion: raw.currentVersion,
+    pr,
   }
 }
