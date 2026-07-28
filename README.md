@@ -114,11 +114,15 @@ on:
   pull_request:
     types: [closed]
 
-# Only run for merged release/* pull requests
+# Only run for merged release/* pull requests that originate from THIS repo.
+# The `head.repo.full_name == github.repository` check is essential: it stops a
+# fork from opening a PR whose branch is named `release/*` and having this
+# privileged workflow run against it. See "Security" below.
 jobs:
   release:
     if: >-
       github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
       startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-latest
     permissions:
@@ -171,3 +175,35 @@ review → merge, and CI does the rest.
 > If you already have a workflow triggered by `v*` tags, you can instead push the
 > tag from a merge-triggered job using a Personal Access Token or a GitHub App
 > token (not `GITHUB_TOKEN`) so the tag push triggers your existing pipeline.
+
+### Security
+
+This workflow publishes to npm, so it must never run untrusted code with
+privileged credentials. The example is designed to be safe:
+
+- **It uses `pull_request`, not `pull_request_target`.** The workflow definition
+  is always read from your default branch, so a pull request cannot modify the
+  release logic. (`pull_request_target` would run with a read/write token and
+  your secrets even for forks — never use it here.)
+- **It requires the release branch to live in your repository**
+  (`head.repo.full_name == github.repository`). The `release/*` branch name is
+  attacker-controllable from a fork, so the name check alone is *not* enough — a
+  forker could open a PR from a branch called `release/v9.9.9`. The same-repo
+  guard ensures the job never even checks out or runs fork-authored code (and
+  `bumpp --pr` always pushes the release branch to your repo, so legitimate
+  releases are unaffected). As an additional backstop, GitHub gives fork pull
+  requests a read-only `GITHUB_TOKEN` with no secrets or OIDC, so the tag and
+  publish steps would fail rather than leak anyway.
+- **Protect `main`** with required reviews so a release can only be merged by a
+  maintainer.
+
+For extra defense-in-depth, run the publish step in a dedicated
+[GitHub Environment](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments)
+with required reviewers, so npm publishing needs an explicit second approval:
+
+```yaml
+jobs:
+  release:
+    environment: release # npm publish now needs a second approval
+    # ...rest of the job as above
+```
