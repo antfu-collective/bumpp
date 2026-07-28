@@ -1,7 +1,7 @@
 {
   "name": "bumpp",
   "type": "module",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "packageManager": "pnpm@11.17.0",
   "description": "Bump version, commit changes, tag, and push to Git",
   "authors": [
