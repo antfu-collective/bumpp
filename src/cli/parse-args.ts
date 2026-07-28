@@ -60,6 +60,7 @@ export async function parseArgs(): Promise<ParsedArgs> {
         recursive: args.recursive,
         release: args.release ?? releaseFromArgs,
         configFilePath: args.configFilePath,
+        pr: args.pr,
       }),
     }
 
@@ -88,6 +89,7 @@ export function loadCliArgs(argv = process.argv) {
     .option('--sign', 'Sign commit and tag')
     .option('--install', `Run 'npm install' after bumping version (default: ${bumpConfigDefaults.install})`)
     .option('-p, --push', `Push to remote (default: ${bumpConfigDefaults.push})`)
+    .option('--pr', 'Release via a pull request (create a branch, push, and open a PR) instead of committing to the base branch')
     .option('-y, --yes', `Skip confirmation (default: ${!bumpConfigDefaults.confirm})`)
     .option('-r, --recursive', `Bump package.json files recursively (default: ${bumpConfigDefaults.recursive})`)
     .option('--verify', `Run git verification (default: ${!bumpConfigDefaults.noVerify})`)

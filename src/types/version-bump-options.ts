@@ -168,6 +168,88 @@ export interface VersionBumpOptions {
    * Custom function to provide the version number
    */
   customVersion?: (currentVersion: string, verkit: typeof _verkit) => Promise<string | void> | string | void
+
+  /**
+   * Perform the release through a pull request instead of committing and
+   * tagging directly on the base branch.
+   *
+   * When enabled, bumpp creates a new branch, bumps the version (and runs the
+   * `execute` script, if any), commits, pushes the branch, and offers to open a
+   * pull request via the local `gh` CLI. No git tag is created locally — the tag
+   * is expected to be created by CI once the release pull request is merged
+   * (see the "Releasing via a Pull Request" section of the docs).
+   *
+   * Can be set to `true` to use the defaults, or an object to customize the
+   * branch name, base branch, pull request title/body, and draft flag.
+   *
+   * Requires `push` to be enabled. Implies that no tag is created locally.
+   *
+   * Defaults to `false`.
+   */
+  pr?: boolean | PullRequestOptions
+}
+
+/**
+ * Options for the pull-request release flow (`pr`).
+ *
+ * Template fields (`branch`, `title`, `body`) support named tokens such as
+ * `{version}`, `{oldVersion}`, `{tag}`, `{releaseType}`, `{major}`, `{minor}`,
+ * `{patch}`, and `{date}`.
+ */
+export interface PullRequestOptions {
+  /**
+   * The name of the release branch to create.
+   *
+   * The `release/` prefix is the marker CI uses to detect a release pull
+   * request, so keep it unless you also update your workflow.
+   *
+   * @default "release/v{version}"
+   */
+  branch?: string
+
+  /**
+   * The base branch the pull request targets.
+   *
+   * Defaults to the remote's default branch (detected via `origin/HEAD`,
+   * falling back to `main`).
+   */
+  base?: string
+
+  /**
+   * The pull request title.
+   *
+   * Defaults to the release commit message.
+   */
+  title?: string
+
+  /**
+   * The pull request body. Can be a template string or a function that receives
+   * the resolved token values and returns the body.
+   *
+   * Defaults to a generated summary of the version change and recent commits.
+   */
+  body?: string | ((tokens: PullRequestBodyTokens) => string)
+
+  /**
+   * Create the pull request as a draft.
+   *
+   * @default false
+   */
+  draft?: boolean
+}
+
+/**
+ * The token values passed to a `pr.body` function.
+ */
+export interface PullRequestBodyTokens {
+  version: string
+  oldVersion: string
+  tag: string
+  releaseType: string
+  major: string
+  minor: string
+  patch: string
+  date: string
 }
 
 /**

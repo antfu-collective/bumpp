@@ -9,10 +9,12 @@ import { x } from 'tinyexec'
 import { symbols } from './cli/symbols'
 import { getCurrentVersion } from './get-current-version'
 import { getNewVersion } from './get-new-version'
-import { formatVersionString, gitCommit, gitPush, gitTag } from './git'
+import { gitCommit, gitPush, gitTag } from './git'
 import { Operation } from './operation'
+import { checkPrPreconditions, cleanupPrBranch, finishPrRelease, startPrBranch } from './pr'
 import { printRecentCommits } from './print-commits'
 import { runNpmScript } from './run-npm-script'
+import { buildTokens, renderTemplate } from './tokens'
 import { NpmScript } from './types/version-bump-progress'
 import { updateFiles } from './update-files'
 
@@ -60,6 +62,14 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
   await getCurrentVersion(operation)
   await getNewVersion(operation, commits)
 
+  const interactive = arg.confirm !== false
+
+  // Verify the repository is ready for a pull-request release (fail fast,
+  // before prompting to bump).
+  let prCtx: Awaited<ReturnType<typeof checkPrPreconditions>> | undefined
+  if (operation.options.pr)
+    prCtx = await checkPrPreconditions(operation, interactive)
+
   if (arg.confirm) {
     printSummary(operation)
 
@@ -76,6 +86,30 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
   // Run npm preversion script, if any
   await runNpmScript(NpmScript.PreVersion, operation)
 
+  try {
+    // Create the release branch before mutating any files, so returning to the
+    // original branch afterwards leaves the working tree untouched.
+    if (operation.options.pr && prCtx)
+      await startPrBranch(operation, prCtx, interactive)
+
+    await runRelease(operation, commits, prCtx, interactive)
+  }
+  catch (error) {
+    // Restore the repository if we failed mid-flow on the release branch.
+    if (operation.options.pr && prCtx)
+      await cleanupPrBranch(prCtx)
+    throw error
+  }
+
+  return operation.results
+}
+
+async function runRelease(
+  operation: Operation,
+  commits: Parameters<typeof finishPrRelease>[2],
+  prCtx: Awaited<ReturnType<typeof checkPrPreconditions>> | undefined,
+  interactive: boolean,
+): Promise<void> {
   // Update the version number in all files
   await updateFiles(operation)
 
@@ -130,19 +164,26 @@ export async function versionBump(arg: (VersionBumpOptions) | string = {}): Prom
   // Run npm postversion script, if any
   await runNpmScript(NpmScript.PostVersion, operation)
 
-  // Push the git commit and tag, if enabled
-  await gitPush(operation)
-
-  return operation.results
+  if (operation.options.pr && prCtx) {
+    // Push the release branch, return to the base branch, and open a PR.
+    await finishPrRelease(operation, prCtx, commits, interactive)
+  }
+  else {
+    // Push the git commit and tag, if enabled
+    await gitPush(operation)
+  }
 }
 
 function printSummary(operation: Operation) {
+  const tokens = buildTokens(operation)
   console.log()
   console.log(`   files ${operation.options.files.map(i => styleText('bold', i)).join('\n         ')}`)
   if (operation.options.commit)
-    console.log(`  commit ${styleText('bold', formatVersionString(operation.options.commit.message, operation.state.newVersion))}`)
+    console.log(`  commit ${styleText('bold', renderTemplate(operation.options.commit.message, tokens))}`)
   if (operation.options.tag)
-    console.log(`     tag ${styleText('bold', formatVersionString(operation.options.tag.name, operation.state.newVersion))}`)
+    console.log(`     tag ${styleText('bold', renderTemplate(operation.options.tag.name, tokens))}`)
+  if (operation.options.pr)
+    console.log(`      pr ${styleText('bold', renderTemplate(operation.options.pr.branch, tokens))} ${styleText('gray', '→ pull request')}`)
   if (operation.options.execute)
     console.log(` execute ${styleText('bold', typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
   if (operation.options.push)

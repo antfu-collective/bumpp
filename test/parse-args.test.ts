@@ -72,6 +72,24 @@ describe('loadCliArgs', async () => {
 
     expect(result.args.configFilePath).toBe('test/fixtures/build.config.ts')
   })
+
+  it('sets the pr property to undefined if no `--pr` flag is present', () => {
+    const result = loadCliArgs([...defaultArgs])
+
+    expect(result.args.pr).toBe(undefined)
+  })
+
+  it('sets the pr property to true if `--pr` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--pr'])
+
+    expect(result.args.pr).toBe(true)
+  })
+
+  it('sets the pr property to false if `--no-pr` is present', () => {
+    const result = loadCliArgs([...defaultArgs, '--no-pr'])
+
+    expect(result.args.pr).toBe(false)
+  })
 })
 
 describe('loadBumpConfig (confirm regression fix)', () => {
