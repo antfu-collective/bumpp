@@ -42,10 +42,10 @@ function getNextVersion(currentVersion: string, bump: BumpRelease, commits: GitC
 
   let type: TruncationType
   if (bump.type === 'next') {
-    type = oldSemVer.prerelease.length ? 'prerelease' : 'patch'
+    type = oldSemVer.prerelease?.length ? 'prerelease' : 'patch'
   }
   else if (bump.type === 'conventional') {
-    type = oldSemVer.prerelease.length ? 'prerelease' : determineSemverChange(commits)
+    type = oldSemVer.prerelease?.length ? 'prerelease' : determineSemverChange(commits)
   }
   else {
     type = bump.type
@@ -78,8 +78,9 @@ function getNextVersions(currentVersion: string, preid: string, commits: GitComm
   const next: Record<string, string> = {}
 
   const parsed = parseVersion(currentVersion)
-  if (typeof parsed.prerelease[0] === 'string')
-    preid = parsed.prerelease[0] || 'preid'
+  const currentPreid = parsed.prerelease?.[0]
+  if (typeof currentPreid === 'string')
+    preid = currentPreid || 'preid'
 
   for (const type of releaseTypes)
     next[type] = getNextVersion(currentVersion, { type, preid }, commits)

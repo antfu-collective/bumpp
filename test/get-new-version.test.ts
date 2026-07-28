@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { versionBumpInfo } from '../src'
+
+vi.mock('prompts', () => ({
+  default: vi.fn(async () => ({ release: 'minor' })),
+}))
 
 describe('getNewVersion', () => {
   it('normalizes explicit loose versions', async () => {
@@ -29,5 +33,36 @@ describe('getNewVersion', () => {
     })
 
     expect(operation.results.newVersion).toBe('1.2.4-beta.2')
+  })
+
+  // `verkit` omits `prerelease` entirely for stable versions, unlike `semver`
+  // which always returned an empty array. Guard against dereferencing it.
+  describe('stable (non-prerelease) current versions', () => {
+    it('bumps `next` to a patch', async () => {
+      const operation = await versionBumpInfo({
+        currentVersion: '12.0.0',
+        release: 'next',
+      })
+
+      expect(operation.results.newVersion).toBe('12.0.1')
+    })
+
+    it('bumps `conventional` without throwing', async () => {
+      const operation = await versionBumpInfo({
+        currentVersion: '12.0.0',
+        release: 'conventional',
+      })
+
+      expect(operation.results.newVersion).toMatch(/^12\.\d+\.\d+$/)
+    })
+
+    it('prompts without throwing', async () => {
+      const operation = await versionBumpInfo({
+        currentVersion: '12.0.0',
+        release: 'prompt',
+      })
+
+      expect(operation.results.newVersion).toBe('12.1.0')
+    })
   })
 })
