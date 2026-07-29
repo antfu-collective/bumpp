@@ -204,18 +204,99 @@ function resolveBody(
   return defaultPrBody(tokens, commits)
 }
 
-function defaultPrBody(tokens: TemplateTokens, commits: GitCommit[]): string {
+/**
+ * Ordered mapping of conventional-commit types to the section titles used in the
+ * generated changelog. Order determines the order of sections in the body.
+ */
+const COMMIT_SECTIONS: [type: string, title: string][] = [
+  ['feat', 'Features'],
+  ['fix', 'Bug Fixes'],
+  ['perf', 'Performance'],
+  ['refactor', 'Refactors'],
+  ['docs', 'Documentation'],
+  ['build', 'Build'],
+  ['types', 'Types'],
+  ['test', 'Tests'],
+  ['style', 'Styles'],
+  ['ci', 'CI'],
+  ['chore', 'Chores'],
+  ['revert', 'Reverts'],
+]
+
+/** Normalizes common type aliases to their canonical section key. */
+const TYPE_ALIASES: Record<string, string> = {
+  feature: 'feat',
+  doc: 'docs',
+  type: 'types',
+}
+
+interface CommitSection {
+  title: string
+  commits: GitCommit[]
+}
+
+/**
+ * Groups commits into changelog sections: breaking changes first, then each
+ * known type in {@link COMMIT_SECTIONS} order, with everything else collected
+ * under "Other Changes".
+ */
+function groupCommits(commits: GitCommit[]): CommitSection[] {
+  const sections: CommitSection[] = []
+
+  const breaking = commits.filter(c => c.isBreaking)
+  if (breaking.length)
+    sections.push({ title: 'Breaking Changes', commits: breaking })
+
+  const byType = new Map<string, GitCommit[]>()
+  for (const commit of commits) {
+    if (commit.isBreaking)
+      continue
+    const key = TYPE_ALIASES[commit.type] ?? commit.type
+    const bucket = byType.get(key)
+    if (bucket)
+      bucket.push(commit)
+    else
+      byType.set(key, [commit])
+  }
+
+  for (const [type, title] of COMMIT_SECTIONS) {
+    const grouped = byType.get(type)
+    if (grouped?.length) {
+      sections.push({ title, commits: grouped })
+      byType.delete(type)
+    }
+  }
+
+  const other = [...byType.values()].flat()
+  if (other.length)
+    sections.push({ title: 'Other Changes', commits: other })
+
+  return sections
+}
+
+/**
+ * Renders a single changelog line for a commit. The scope is bolded as a
+ * prefix, and pull-request references and the short hash are appended — both
+ * of which GitHub auto-links inside a pull-request body.
+ */
+function formatCommitLine(commit: GitCommit): string {
+  const scope = commit.scope ? `**${commit.scope}**: ` : ''
+  const prRefs = commit.references
+    .filter(ref => ref.type === 'pull-request')
+    .map(ref => ref.value)
+  const refs = prRefs.length ? ` (${prRefs.join(', ')})` : ''
+  return `- ${scope}${commit.description}${refs} (${commit.shortHash})`
+}
+
+export function defaultPrBody(tokens: TemplateTokens, commits: GitCommit[]): string {
   const lines: string[] = [
     `Release \`${tokens.tag}\` (\`${tokens.oldVersion}\` → \`${tokens.version}\`).`,
   ]
 
-  if (commits.length) {
-    lines.push('', '### Commits', '')
-    for (const commit of commits) {
-      const scope = commit.scope ? `(${commit.scope})` : ''
-      const type = commit.type ? `${commit.type}${scope}: ` : ''
-      lines.push(`- ${type}${commit.description} (${commit.shortHash})`)
-    }
+  for (const section of groupCommits(commits)) {
+    lines.push('', `### ${section.title}`, '')
+    for (const commit of section.commits)
+      lines.push(formatCommitLine(commit))
   }
 
   return lines.join('\n')
