@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadCliArgs, parseArgs } from '../src/cli/parse-args'
 import { loadBumpConfig } from '../src/config'
@@ -117,7 +118,7 @@ describe('parseArgs (confirm regression fix)', () => {
 })
 
 describe('loadBumpConfig (files override fix #119)', () => {
-  const fixtureDir = new URL('./fixtures', import.meta.url).pathname
+  const fixtureDir = resolve(import.meta.dirname, 'fixtures')
 
   it('preserves config files when no CLI files are passed (files: undefined)', async () => {
     const config = await loadBumpConfig({ files: undefined }, fixtureDir)
