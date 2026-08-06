@@ -1,4 +1,4 @@
-import type { VersionBumpOptions } from './types/version-bump-options'
+import type { VersionBumpOptions, VersionBumpRelease } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
 import { styleText } from 'node:util'
@@ -35,7 +35,7 @@ export async function versionBump(): Promise<VersionBumpResults>
  * - A release type (e.g. "major", "minor", "patch", "prerelease", etc.)
  * - "prompt" to prompt the user for the version number
  */
-export async function versionBump(release: string): Promise<VersionBumpResults>
+export async function versionBump(release: VersionBumpRelease): Promise<VersionBumpResults>
 
 /**
  * Bumps the version number in one or more files, prompting the user if necessary.
@@ -47,7 +47,7 @@ export async function versionBump(options: VersionBumpOptions): Promise<VersionB
  * Bumps the version number in one or more files, prompting the user if necessary.
  * Optionally also commits, tags, and pushes to git.
  */
-export async function versionBump(arg: (VersionBumpOptions) | string = {}): Promise<VersionBumpResults | undefined> {
+export async function versionBump(arg: VersionBumpOptions | VersionBumpRelease = {}): Promise<VersionBumpResults | undefined> {
   if (typeof arg === 'string')
     arg = { release: arg }
 
@@ -199,7 +199,7 @@ function printSummary(operation: Operation) {
 /**
  * Bumps the version number in one or more files, prompting users if necessary.
  */
-export async function versionBumpInfo(arg: VersionBumpOptions | string = {}): Promise<Operation> {
+export async function versionBumpInfo(arg: VersionBumpOptions | VersionBumpRelease = {}): Promise<Operation> {
   if (typeof arg === 'string')
     arg = { release: arg }
 
