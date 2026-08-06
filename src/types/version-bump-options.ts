@@ -4,7 +4,7 @@ import type { ReleaseType } from '../release-type'
 import type { VersionBumpProgress } from './version-bump-progress'
 
 export type VersionNumber = `${number}` | `${number}${string}`
-export type VersionBumpRelease = VersionNumber | ReleaseType | 'prompt'
+export type VersionBumpRelease = ReleaseType | 'prompt' | VersionNumber | `v${VersionNumber}`
 
 /**
  * Options for the `versionBump()` function.
