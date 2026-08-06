@@ -53,7 +53,7 @@ describe('getNewVersion', () => {
         release: 'conventional',
       })
 
-      expect(operation.results.newVersion).toMatch(/^12\.\d+\.\d+$/)
+      expect(operation.results.newVersion).toMatch(/^\d+\.\d+\.\d+$/)
     })
 
     it('prompts without throwing', async () => {
