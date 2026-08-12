@@ -303,11 +303,17 @@ export function defaultPrBody(tokens: TemplateTokens, commits: GitCommit[]): str
 }
 
 async function isGhAvailable(): Promise<boolean> {
-  const version = await x('gh', ['--version'], { throwOnError: false })
-  if (version.exitCode !== 0)
+  try {
+    const version = await x('gh', ['--version'], { throwOnError: false })
+    if (version.exitCode !== 0)
+      return false
+    const auth = await x('gh', ['auth', 'status'], { throwOnError: false })
+    return auth.exitCode === 0
+  }
+  catch {
+    // throwOnError only covers exit codes; a missing gh binary still rejects.
     return false
-  const auth = await x('gh', ['auth', 'status'], { throwOnError: false })
-  return auth.exitCode === 0
+  }
 }
 
 function printManualInstructions(
