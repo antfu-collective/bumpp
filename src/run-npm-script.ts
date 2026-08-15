@@ -17,6 +17,7 @@ export async function runNpmScript(script: NpmScript, operation: Operation): Pro
 
     if (isManifest(manifest) && hasScript(manifest, script)) {
       await x('npm', ['run', script, '--silent'], {
+        throwOnError: true,
         nodeOptions: { stdio: 'inherit' },
       })
       operation.update({ event: ProgressEvent.NpmScript, script })
