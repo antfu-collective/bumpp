@@ -1,6 +1,8 @@
 import type { Manifest } from './manifest'
 import type { Operation } from './operation'
 import type { NpmScript } from './types/version-bump-progress'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
 import { x } from 'tinyexec'
 import { readJsoncFile } from './fs'
 import { isManifest } from './manifest'
@@ -12,7 +14,7 @@ import { ProgressEvent } from './types/version-bump-progress'
 export async function runNpmScript(script: NpmScript, operation: Operation): Promise<Operation> {
   const { cwd, ignoreScripts } = operation.options
 
-  if (!ignoreScripts) {
+  if (!ignoreScripts && existsSync(path.join(cwd, 'package.json'))) {
     const { data: manifest } = await readJsoncFile('package.json', cwd)
 
     if (isManifest(manifest) && hasScript(manifest, script)) {
