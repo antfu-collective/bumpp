@@ -75,6 +75,12 @@ With `--pr`, bumpp:
    CLI (auto-created with `--yes`). If `gh` is unavailable, it prints a link to
    open the pull request manually.
 
+If an open release pull request for the same version already exists on the same
+release branch and was opened by you, bumpp updates it instead of creating a
+duplicate — the branch is force-pushed and the pull request's title and body are
+refreshed. Re-run `bumpp --pr` and pick the same version to amend an in-progress
+release PR.
+
 The `release/` branch prefix is the marker CI uses to recognise a release pull
 request, so keep it unless you also update your workflow.
 

@@ -34,6 +34,12 @@ export interface PrContext {
   branchName: string
   /** Whether the release branch already existed and must be force-pushed. */
   forcePush: boolean
+  /**
+   * An open pull request for this release branch authored by the current user,
+   * if one already exists. When set, the branch is updated in place and this
+   * pull request is edited instead of opening a new one.
+   */
+  existingPr?: { number: number, url: string }
 }
 
 async function confirm(message: string, initial = true): Promise<boolean> {
@@ -95,7 +101,16 @@ export async function startPrBranch(operation: Operation, ctx: PrContext, intera
     remoteBranchExists(ctx.branchName),
   ])
 
-  if (existsLocal || existsRemote) {
+  // An open release PR for this version (authored by the current user) means we
+  // update it in place rather than open a duplicate. The branch is reset and
+  // force-pushed, which updates the PR's head.
+  ctx.existingPr = await findExistingPr(ctx.branchName)
+
+  if (ctx.existingPr) {
+    console.log(symbols.info, `Updating existing pull request ${styleText('bold', `#${ctx.existingPr.number}`)} for ${styleText('bold', ctx.branchName)}.`)
+    ctx.forcePush = true
+  }
+  else if (existsLocal || existsRemote) {
     const where = [existsLocal && 'locally', existsRemote && 'on origin'].filter(Boolean).join(' and ')
     const message = `Release branch "${ctx.branchName}" already exists ${where}.`
     if (!interactive)
@@ -138,6 +153,25 @@ export async function finishPrRelease(
 
   if (!ghReady || !repo) {
     printManualInstructions(repo, ctx, title, body, pr.draft)
+    return
+  }
+
+  if (ctx.existingPr) {
+    const shouldUpdate = interactive ? await confirm(`Update pull request #${ctx.existingPr.number} into "${ctx.baseBranch}"?`) : true
+    if (!shouldUpdate) {
+      console.log(symbols.info, `Left pull request ${styleText(['cyan', 'bold'], ctx.existingPr.url)} unchanged.`)
+      return
+    }
+
+    const result = await x('gh', ['pr', 'edit', String(ctx.existingPr.number), '--title', title, '--body', body], { throwOnError: false })
+    if (result.exitCode === 0) {
+      console.log(symbols.success, `Pull request updated: ${styleText(['cyan', 'bold'], ctx.existingPr.url)}`)
+    }
+    else {
+      console.log(styleText('yellow', `Failed to update pull request #${ctx.existingPr.number} via \`gh\`.`))
+      if (result.stderr.trim())
+        console.log(styleText('gray', result.stderr.trim()))
+    }
     return
   }
 
@@ -300,6 +334,25 @@ export function defaultPrBody(tokens: TemplateTokens, commits: GitCommit[]): str
   }
 
   return lines.join('\n')
+}
+
+/**
+ * Finds an open pull request whose head is `branch` and that was authored by the
+ * current user (`--author @me`). Returns `undefined` if `gh` is unavailable or
+ * no such pull request exists.
+ */
+async function findExistingPr(branch: string): Promise<{ number: number, url: string } | undefined> {
+  try {
+    const result = await x('gh', ['pr', 'list', '--head', branch, '--state', 'open', '--author', '@me', '--json', 'number,url'], { throwOnError: false })
+    if (result.exitCode !== 0)
+      return undefined
+    const list = JSON.parse(result.stdout) as { number: number, url: string }[]
+    return list[0]
+  }
+  catch {
+    // Missing gh binary, no repo, or unparseable output — treat as "none".
+    return undefined
+  }
 }
 
 async function isGhAvailable(): Promise<boolean> {
