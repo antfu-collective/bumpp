@@ -103,6 +103,15 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   const execute = raw.execute
   const recursive = Boolean(raw.recursive)
 
+  // cac yields `true` for a valueless `--release` and an array when the flag is
+  // repeated. Those are not strings, so they must not fall through as a version.
+  const rawRelease: unknown = raw.release
+  if (rawRelease != null && typeof rawRelease !== 'string') {
+    throw new Error(
+      `The \`release\` option must be a release type or version number (received ${JSON.stringify(rawRelease)}).`,
+    )
+  }
+
   let release: Release
   if (!raw.release || raw.release === 'prompt')
     release = { type: 'prompt', preid }

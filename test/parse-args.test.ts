@@ -2,6 +2,7 @@ import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadCliArgs, parseArgs } from '../src/cli/parse-args'
 import { loadBumpConfig } from '../src/config'
+import { normalizeOptions } from '../src/normalize-options'
 
 const defaultArgs = ['node', 'bumpp']
 
@@ -128,5 +129,38 @@ describe('loadBumpConfig (files override fix #119)', () => {
   it('overrides config files when CLI files are explicitly passed', async () => {
     const config = await loadBumpConfig({ files: ['explicit.json'] }, fixtureDir)
     expect(config.files).toEqual(['explicit.json'])
+  })
+})
+
+describe('non-string --release (#131)', () => {
+  async function normalizeReleaseFromCli(...flags: string[]) {
+    const { args } = loadCliArgs([...defaultArgs, ...flags])
+    return normalizeOptions({
+      release: args.release,
+      commit: false,
+      tag: false,
+      push: false,
+    })
+  }
+
+  it('throws for a valueless --release flag instead of bumping to undefined.undefined.undefined', async () => {
+    const { args } = loadCliArgs([...defaultArgs, '--yes', '--release'])
+    expect(args.release).toBe(true)
+    await expect(normalizeReleaseFromCli('--yes', '--release'))
+      .rejects
+      .toThrow(/release.*must be a release type or version number/)
+  })
+
+  it('throws when --release is repeated', async () => {
+    const { args } = loadCliArgs([...defaultArgs, '--yes', '--release', '--release', 'minor'])
+    expect(args.release).toEqual([true, 'minor'])
+    await expect(normalizeReleaseFromCli('--yes', '--release', '--release', 'minor'))
+      .rejects
+      .toThrow(/release.*must be a release type or version number/)
+  })
+
+  it('still accepts a release type after --release', async () => {
+    const options = await normalizeReleaseFromCli('--yes', '--release', 'minor')
+    expect(options.release).toMatchObject({ type: 'minor' })
   })
 })
