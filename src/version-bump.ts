@@ -1,3 +1,4 @@
+import type { TemplateTokens } from './tokens'
 import type { VersionBumpOptions, VersionBumpRelease } from './types/version-bump-options'
 import type { VersionBumpResults } from './types/version-bump-results'
 import process from 'node:process'
@@ -14,7 +15,7 @@ import { Operation } from './operation'
 import { checkPrPreconditions, cleanupPrBranch, finishPrRelease, startPrBranch } from './pr'
 import { printRecentCommits } from './print-commits'
 import { runNpmScript } from './run-npm-script'
-import { buildTokens, renderTemplate } from './tokens'
+import { buildTokens, hasNamedTokens, renderTemplate } from './tokens'
 import { NpmScript } from './types/version-bump-progress'
 import { updateFiles } from './update-files'
 
@@ -141,7 +142,8 @@ async function runRelease(
       await operation.options.execute(operation)
     }
     else {
-      const [command, ...args] = tokenizeArgs(operation.options.execute)
+      const script = renderExecute(operation.options.execute, buildTokens(operation))
+      const [command, ...args] = tokenizeArgs(script)
       console.log(symbols.info, 'Executing script', command, ...args)
       await x(command, args, {
         throwOnError: true,
@@ -184,8 +186,12 @@ function printSummary(operation: Operation) {
     console.log(`     tag ${styleText('bold', renderTemplate(operation.options.tag.name, tokens))}`)
   if (operation.options.pr)
     console.log(`      pr ${styleText('bold', renderTemplate(operation.options.pr.branch, tokens))} ${styleText('gray', '→ pull request')}`)
-  if (operation.options.execute)
-    console.log(` execute ${styleText('bold', typeof operation.options.execute === 'function' ? 'function' : operation.options.execute)}`)
+  if (operation.options.execute) {
+    const execute = typeof operation.options.execute === 'function'
+      ? 'function'
+      : renderExecute(operation.options.execute, tokens)
+    console.log(` execute ${styleText('bold', execute)}`)
+  }
   if (operation.options.push)
     console.log(`    push ${styleText(['cyan', 'bold'], 'yes')}`)
   if (operation.options.install)
@@ -194,6 +200,19 @@ function printSummary(operation: Operation) {
   console.log(`    from ${styleText('bold', operation.state.currentVersion)}`)
   console.log(`      to ${styleText(['green', 'bold'], operation.state.newVersion)}`)
   console.log()
+}
+
+/**
+ * Renders an `--execute` command string.
+ *
+ * Commit/tag templates append the version when there is no placeholder; a
+ * command must not be rewritten that way (`npm run clean` would become
+ * `npm run clean1.2.3`). Only substitute when `%s` or a named token is present.
+ */
+function renderExecute(command: string, tokens: TemplateTokens): string {
+  if (hasNamedTokens(command) || command.includes('%s'))
+    return renderTemplate(command, tokens)
+  return command
 }
 
 /**

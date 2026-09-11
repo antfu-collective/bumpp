@@ -2,7 +2,8 @@ import type { Operation } from './operation'
 
 /**
  * The set of named tokens that can be used in template strings such as the
- * commit message, tag name, and pull request branch/title/body.
+ * commit message, tag name, `--execute` command, and pull request
+ * branch/title/body.
  *
  * @example
  * ```

@@ -28,8 +28,9 @@ export default defineConfig({
 
 ## Template tokens
 
-The commit message, tag name, and pull request branch/title/body all support
-named tokens. This is the recommended template style:
+The commit message, tag name, `--execute` command, and pull request
+branch/title/body all support named tokens. This is the recommended template
+style:
 
 | Token           | Description                                        | Example      |
 | --------------- | -------------------------------------------------- | ------------ |
