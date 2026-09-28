@@ -86,12 +86,12 @@ export async function versionBump(arg: VersionBumpOptions | VersionBumpRelease =
   // Run npm preversion script, if any
   await runNpmScript(NpmScript.PreVersion, operation)
 
-  try {
-    // Create the release branch before mutating any files, so returning to the
-    // original branch afterwards leaves the working tree untouched.
-    if (operation.options.pr && prCtx)
-      await startPrBranch(operation, prCtx, interactive)
+  // Create the release branch before mutating any files, so returning to the
+  // original branch afterwards leaves the working tree untouched.
+  if (operation.options.pr && prCtx)
+    await startPrBranch(operation, prCtx, interactive)
 
+  try {
     await runRelease(operation, commits, prCtx, interactive)
   }
   catch (error) {
