@@ -167,9 +167,10 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
 
     // check if pnpm-workspace.yaml exists, if so, add all workspaces to files
     if (fsSync.existsSync('pnpm-workspace.yaml')) {
-      // read pnpm-workspace.yaml
-      const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8').then(yaml.parse) as { packages?: string[] }
-      workspaces.push(...(pnpmWorkspace.packages ?? []))
+      // read pnpm-workspace.yaml (may parse to null / non-object)
+      const pnpmWorkspace = await fs.readFile('pnpm-workspace.yaml', 'utf8').then(yaml.parse) as { packages?: unknown } | null
+      if (Array.isArray(pnpmWorkspace?.packages))
+        workspaces.push(...pnpmWorkspace.packages as string[])
     }
     // check npm/bun workspace config
     if (fsSync.existsSync('package.json')) {
