@@ -145,7 +145,13 @@ export interface VersionBumpOptions {
   progress?: (progress: VersionBumpProgress) => void
 
   /**
-   * Execute additional command after bumping and before committing
+   * Execute additional command after bumping and before committing.
+   * String commands support the same `%s` / `{version}` placeholders as
+   * `--commit` and `--tag`. Unlike those, the version is **not** appended when
+   * there is no placeholder.
+   *
+   * Execute is argv-spawned (not `sh -c`), so shell operators such as `&&`
+   * still need a shell or script wrapper.
    */
   execute?: string | ((config: Operation) => void | PromiseLike<void>)
 

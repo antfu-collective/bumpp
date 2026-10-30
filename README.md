@@ -28,8 +28,9 @@ export default defineConfig({
 
 ## Template tokens
 
-The commit message, tag name, and pull request branch/title/body all support
-named tokens. This is the recommended template style:
+The commit message, tag name, `--execute` command, and pull request
+branch/title/body all support named tokens. This is the recommended template
+style:
 
 | Token           | Description                                        | Example      |
 | --------------- | -------------------------------------------------- | ------------ |
@@ -49,6 +50,11 @@ bumpp --commit "chore: release {tag}" --tag "{version}"
 > The legacy `%s` placeholder (replaced with the new version) still works but is
 > soft-deprecated in favour of `{version}`. If a template contains any named
 > token, `%s` substitution is disabled for that template.
+>
+> For `--execute`, tokens are substituted the same way, but the version is
+> **not** appended when there is no placeholder (so `npm run clean` stays
+> unchanged). Execute is argv-spawned, not run through a shell — use a shell
+> or script if you need operators such as `&&`.
 
 ## Releasing via a Pull Request
 

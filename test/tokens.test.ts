@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hasNamedTokens, renderTemplate } from '../src/tokens'
+import { hasNamedTokens, renderExecute, renderTemplate } from '../src/tokens'
 
 const tokens = {
   version: '1.2.3',
@@ -51,5 +51,20 @@ describe('renderTemplate (legacy %s, soft-deprecated)', () => {
 
   it('appends the version when there is no placeholder', () => {
     expect(renderTemplate('chore: release v', tokens)).toBe('chore: release v1.2.3')
+  })
+})
+
+describe('renderExecute', () => {
+  it('substitutes legacy %s with the new version', () => {
+    expect(renderExecute('changelogen -r %s', tokens)).toBe('changelogen -r 1.2.3')
+  })
+
+  it('substitutes named tokens', () => {
+    expect(renderExecute('echo {version}', tokens)).toBe('echo 1.2.3')
+    expect(renderExecute('echo {oldVersion}->{version}', tokens)).toBe('echo 1.2.2->1.2.3')
+  })
+
+  it('does not append the version when there is no placeholder', () => {
+    expect(renderExecute('npm run clean', tokens)).toBe('npm run clean')
   })
 })

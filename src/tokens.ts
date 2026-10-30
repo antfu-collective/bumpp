@@ -2,7 +2,8 @@ import type { Operation } from './operation'
 
 /**
  * The set of named tokens that can be used in template strings such as the
- * commit message, tag name, and pull request branch/title/body.
+ * commit message, tag name, `--execute` command, and pull request
+ * branch/title/body.
  *
  * @example
  * ```
@@ -79,6 +80,22 @@ export function renderTemplate(template: string, tokens: TemplateTokens): string
     return template.replaceAll('%s', tokens.version)
 
   return template + tokens.version
+}
+
+/**
+ * Renders an `--execute` command string.
+ *
+ * Commit/tag templates append the version when there is no placeholder; a
+ * command must not be rewritten that way (`npm run clean` would become
+ * `npm run clean1.2.3`). Only substitute when `%s` or a named token is present.
+ *
+ * Note: execute is argv-spawned (`tokenizeArgs` + `tinyexec`), not run through a
+ * shell, so shell operators such as `&&` still need a shell/script wrapper.
+ */
+export function renderExecute(command: string, tokens: TemplateTokens): string {
+  if (hasNamedTokens(command) || command.includes('%s'))
+    return renderTemplate(command, tokens)
+  return command
 }
 
 function pad(n: number): string {
