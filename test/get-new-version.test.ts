@@ -65,4 +65,12 @@ describe('getNewVersion', () => {
       expect(operation.results.newVersion).toBe('12.1.0')
     })
   })
+
+  it('rejects an invalid version string (#131 bad-string path)', async () => {
+    await expect(versionBumpInfo({
+      currentVersion: '1.0.0',
+      // @ts-expect-error intentional invalid string to assert runtime rejection
+      release: 'banana',
+    })).rejects.toThrow(/Invalid version syntax/)
+  })
 })
