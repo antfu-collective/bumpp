@@ -223,6 +223,72 @@ export interface GithubRepo {
 }
 
 /**
+ * Parses a git remote URL or `package.json` `repository` string into
+ * `{ owner, repo }`. Supports HTTPS, SSH, `git+` prefixes, and npm shorthand
+ * (`owner/repo`, `github:owner/repo`). Returns `undefined` when the slug
+ * cannot be determined.
+ */
+export function parseRepoSlug(input: string): GithubRepo | undefined {
+  let raw = input.trim()
+  if (!raw)
+    return undefined
+
+  // Strip common prefixes used in package.json repository fields.
+  raw = raw.replace(/^git\+/, '')
+
+  // npm shorthand: "owner/repo" or "github:owner/repo"
+  const shorthand = raw.match(/^(?:github:)?([^/:\s]+)\/([^/#\s]+?)$/i)
+  if (shorthand && !raw.includes('://') && !raw.includes('@')) {
+    return {
+      owner: shorthand[1],
+      repo: shorthand[2].replace(/\.git$/i, ''),
+    }
+  }
+
+  // git@host:owner/repo.git
+  // https://host/owner/repo.git
+  // ssh://git@host/owner/repo.git
+  const match = raw.match(/(?:[:/@])([^/:\s]+)\/([^/#\s]+?)(?:\.git)?\/?$/i)
+  if (!match)
+    return undefined
+
+  return {
+    owner: match[1],
+    repo: match[2].replace(/\.git$/i, ''),
+  }
+}
+
+/**
+ * Returns `true` when two repo slugs refer to the same repository.
+ * Comparison is case-insensitive (GitHub treats owner/repo that way).
+ */
+export function reposMatch(a: GithubRepo, b: GithubRepo): boolean {
+  return a.owner.toLowerCase() === b.owner.toLowerCase()
+    && a.repo.toLowerCase() === b.repo.toLowerCase()
+}
+
+/**
+ * Extracts a repository URL/string from a `package.json` `repository` field
+ * (string, or `{ url }` / `{ type, url }`).
+ */
+export function getRepositoryFieldValue(repository: unknown): string | undefined {
+  if (typeof repository === 'string' && repository.trim())
+    return repository.trim()
+
+  if (
+    repository
+    && typeof repository === 'object'
+    && 'url' in repository
+    && typeof (repository as { url: unknown }).url === 'string'
+    && (repository as { url: string }).url.trim()
+  ) {
+    return (repository as { url: string }).url.trim()
+  }
+
+  return undefined
+}
+
+/**
  * Parses the `origin` remote URL into a GitHub `{ owner, repo }`, or returns
  * `undefined` if the remote is missing or not a GitHub URL.
  */
@@ -231,10 +297,23 @@ export async function getGithubRepo(): Promise<GithubRepo | undefined> {
   if (exitCode !== 0 || !stdout)
     return undefined
 
-  // git@github.com:owner/repo.git  |  https://github.com/owner/repo.git
-  const match = stdout.match(/github\.com[/:]([^/]+)\/(.+?)(?:\.git)?$/)
-  if (!match)
+  const parsed = parseRepoSlug(stdout)
+  if (!parsed)
     return undefined
 
-  return { owner: match[1], repo: match[2] }
+  // Preserve previous behavior: only treat github.com remotes as GitHub repos.
+  if (!/github\.com[/:]/i.test(stdout) && !/^github:/i.test(stdout.trim()))
+    return undefined
+
+  return parsed
+}
+
+/**
+ * Returns the `origin` remote URL, or `undefined` if it is missing.
+ */
+export async function getOriginRemoteUrl(): Promise<string | undefined> {
+  const { exitCode, stdout } = await git(['remote', 'get-url', 'origin'])
+  if (exitCode !== 0 || !stdout)
+    return undefined
+  return stdout
 }

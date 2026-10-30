@@ -7,6 +7,7 @@ import prompts from 'prompts'
 import { getRecentCommits } from 'tiny-conventional-commits-parser'
 import { x } from 'tinyexec'
 import { symbols } from './cli/symbols'
+import { checkPushRemoteForOperation } from './check-push-remote'
 import { getCurrentVersion } from './get-current-version'
 import { getNewVersion } from './get-new-version'
 import { gitCommit, gitPush, gitTag } from './git'
@@ -63,6 +64,10 @@ export async function versionBump(arg: VersionBumpOptions | VersionBumpRelease =
   await getNewVersion(operation, commits)
 
   const interactive = arg.confirm !== false
+
+  // Fail fast when origin does not match package.json repository, so a fork
+  // remote cannot receive the release tag/push by accident.
+  await checkPushRemoteForOperation(operation)
 
   // Verify the repository is ready for a pull-request release (fail fast,
   // before prompting to bump).
